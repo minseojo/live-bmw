@@ -28,20 +28,20 @@ public class Device {
     private String deviceId;
 
     /**
-     * User-Agent 헤더
-     * - 브라우저/앱 UA는 길 수 있음 (최대 255~512 정도 잡는게 안전)
-     * - 너무 길 경우 잘라서 저장하는 것도 고려
-     */
-    @Column(length = 512)
-    private String userAgent;
-
-    /**
      * IPv4/IPv6 주소
      * - VARCHAR(45): IPv6 full 표현 최대 길이 (39자) + 여유
      * - RDBMS가 지원하면 INET 타입 권장 (PostgreSQL 등)
      */
     @Column(length = 45)
     private String remoteIp;
+
+    /**
+     * User-Agent 헤더
+     * - 브라우저/앱 UA는 길 수 있음 (최대 255~512 정도 잡는게 안전)
+     * - 너무 길 경우 잘라서 저장하는 것도 고려
+     */
+    @Column(length = 512)
+    private String userAgent;
 
     /** 최초 접속 시각 */
     @Column(nullable = false, updatable = false)
@@ -51,15 +51,18 @@ public class Device {
     @Column(nullable = false)
     private Instant lastSeen;
 
-    public Device(String deviceId, Instant firstSeen) {
+    public Device(String deviceId, String clientIp, String userAgent, Instant firstSeen) {
         this.deviceId = deviceId;
         this.firstSeen = firstSeen;
         this.lastSeen = firstSeen;
+        this.remoteIp = clientIp;
+        this.userAgent = userAgent;
     }
 
-    public void updateLastSeen(Instant when, String userAgent, String remoteIp) {
-        this.lastSeen = when;
+    public void updateLastSeen(String clientIp, String userAgent, Instant when) {
+        this.remoteIp = clientIp;
         this.userAgent = userAgent;
-        this.remoteIp = remoteIp;
+        this.lastSeen = when;
     }
+
 }
