@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_BASE ?? "https://livebmw.cloud/api";
+const API_BASE = import.meta.env.VITE_API_BASE ?? "https://api.livebmw.cloud/api";
 
 async function request(path, { method = "GET", body, headers, signal } = {}) {
     const res = await fetch(`${API_BASE}${path}`, {

@@ -14,13 +14,16 @@ import java.util.stream.Stream;
 @Configuration
 public class CorsConfig {
 
-    @Value("${app.cors.allowed-origins:*}")
+    @Value("${app.cors.allowed-origins}")
     private String allowedOrigins;
 
-    @Value("${app.cors.allow-credentials:false}")
+    @Value("${app.cors.allowed-origin-patterns:}")
+    private String allowedOriginPatterns;
+
+    @Value("${app.cors.allow-credentials}")
     private boolean allowCredentials;
 
-    @Value("${app.cors.max-age-seconds:3600}")
+    @Value("${app.cors.max-age-seconds}")
     private long maxAgeSeconds;
 
     @Bean
@@ -28,13 +31,18 @@ public class CorsConfig {
         CorsConfiguration corsConfig = new CorsConfiguration();
 
         // Origin 설정
-        if (allowedOrigins.contains("*")) {
-            corsConfig.addAllowedOriginPattern("*");
-        } else {
-            Stream.of(allowedOrigins.split(","))
+        Stream.of(allowedOrigins.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isEmpty())
+                .forEach(corsConfig::addAllowedOrigin);
+
+        // 와일드카드 패턴 (예: https://*.vercel.app)
+        if (allowedOriginPatterns != null && !allowedOriginPatterns.isBlank()) {
+            // ★ allowCredentials=true인 경우 와일드카드/패턴은 브라우저가 거부합니다.
+            Stream.of(allowedOriginPatterns.split(","))
                     .map(String::trim)
-                    .filter(origin -> !origin.isEmpty())
-                    .forEach(corsConfig::addAllowedOrigin);
+                    .filter(s -> !s.isEmpty())
+                    .forEach(corsConfig::addAllowedOriginPattern);
         }
 
         // Methods/Headers
