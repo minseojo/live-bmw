@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8080/api";
+const API_BASE = import.meta.env.VITE_API_BASE || "/api";
 
 /** 디바이스 조회 후 check-in (성공 시 디바이스 정보 반환) */
 export async function getDevice(deviceId) {
