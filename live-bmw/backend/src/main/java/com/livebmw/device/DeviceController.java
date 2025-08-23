@@ -4,6 +4,7 @@ import com.livebmw.device.domain.Device;
 import com.livebmw.device.domain.dto.DeviceSaveRequest;
 import com.livebmw.device.domain.dto.DeviceResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +19,11 @@ public class DeviceController {
     private final DeviceService deviceService;
 
     @PostMapping
-    public ResponseEntity<?> register(@RequestBody DeviceSaveRequest request, HttpServletRequest httpServletRequest) {
-        if (request.deviceId() == null || request.deviceId().isBlank()) {
-            return ResponseEntity.badRequest().body(Map.of("error","deviceId is required"));
-        }
+    public ResponseEntity<DeviceResponse> register(
+            @Valid @RequestBody DeviceSaveRequest request,
+            HttpServletRequest httpRequest) {
 
-        Device newDevice = deviceService.registerNew(request, httpServletRequest);
+        Device newDevice = deviceService.registerNew(request, httpRequest);
 
         DeviceResponse response = new DeviceResponse(
                 newDevice.getDeviceId(),
