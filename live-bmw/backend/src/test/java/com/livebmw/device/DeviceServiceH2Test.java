@@ -1,7 +1,12 @@
 package com.livebmw.device;
 
-import com.livebmw.device.domain.Device;
-import com.livebmw.device.domain.dto.DeviceSaveRequest;
+import com.livebmw.device.application.DeviceException;
+import com.livebmw.device.application.DeviceService;
+import com.livebmw.device.domain.model.Device;
+import com.livebmw.device.api.dto.DeviceCheckInResponse;
+import com.livebmw.device.api.dto.DeviceResponse;
+import com.livebmw.device.api.dto.DeviceSaveRequest;
+import com.livebmw.device.domain.DeviceRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,10 +45,10 @@ class DeviceServiceH2Test {
         Instant now = Instant.now();
 
         // when
-        Device saved = deviceService.addDevice(req, CLIENT_IP, USER_AGENT, now);
+        DeviceResponse saved = deviceService.addDevice(req, CLIENT_IP, USER_AGENT, now);
 
         // then
-        assertThat(saved.getDeviceId()).isEqualTo(deviceId);
+        assertThat(saved.deviceId()).isEqualTo(deviceId);
 
         Device fromDb = deviceRepository.findByDeviceId(deviceId).orElseThrow();
         assertThat(fromDb.getDeviceId()).isEqualTo(deviceId);
@@ -72,9 +77,9 @@ class DeviceServiceH2Test {
         String deviceId = "dev-get-1";
         deviceRepository.save(new Device(deviceId, CLIENT_IP, USER_AGENT,Instant.now()));
 
-        Device got = deviceService.getDeviceById(deviceId);
+        DeviceResponse got = deviceService.getDeviceById(deviceId);
 
-        assertThat(got.getDeviceId()).isEqualTo(deviceId);
+        assertThat(got.deviceId()).isEqualTo(deviceId);
     }
 
     @Test
@@ -94,11 +99,9 @@ class DeviceServiceH2Test {
         String CLIENT_IP = "198.51.100.7";
         String USER_AGENT = "USER_AGENT-CheckIn";
 
-        Device updated = deviceService.checkIn(deviceId, CLIENT_IP, USER_AGENT, now);
+        DeviceCheckInResponse updated = deviceService.checkIn(deviceId, CLIENT_IP, USER_AGENT, now);
 
-        assertThat(updated.getLastSeen()).isEqualTo(now);
-        assertThat(updated.getRemoteIp()).isEqualTo(CLIENT_IP);
-        assertThat(updated.getUserAgent()).isEqualTo(USER_AGENT);
+        assertThat(updated.lastSeen()).isEqualTo(now);
 
         Device fromDb = deviceRepository.findByDeviceId(deviceId).orElseThrow();
         assertThat(fromDb.getLastSeen()).isEqualTo(now);

@@ -1,4 +1,4 @@
-package com.livebmw.device;
+package com.livebmw.device.application;
 
 import com.livebmw.common.error.BusinessException;
 import com.livebmw.common.error.ErrorCode;
@@ -27,6 +27,9 @@ public class DeviceException extends BusinessException {
     private DeviceException(DeviceError de, String message, Map<String, Object> details) {
         super(de.status, de.code, message != null ? message : de.defaultMessage, details);
     }
+
+
+    /* ---------- factory methods ---------- */
 
     public static DeviceException alreadyExists(String deviceId) {
         return new DeviceException(

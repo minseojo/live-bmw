@@ -1,10 +1,10 @@
-package com.livebmw.device;
+package com.livebmw.device.api;
 
 import com.livebmw.common.util.RequestUtils;
-import com.livebmw.device.domain.Device;
-import com.livebmw.device.domain.dto.DeviceCheckInResponse;
-import com.livebmw.device.domain.dto.DeviceResponse;
-import com.livebmw.device.domain.dto.DeviceSaveRequest;
+import com.livebmw.device.application.DeviceService;
+import com.livebmw.device.api.dto.DeviceCheckInResponse;
+import com.livebmw.device.api.dto.DeviceResponse;
+import com.livebmw.device.api.dto.DeviceSaveRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/devices")
@@ -37,8 +38,7 @@ public class DeviceController {
         try {
             log.info("register device - deviceId={}, clientIp={}, userAgent={}", requestDeviceId, clientIp, userAgent);
             log.debug("register device (full userAgent) userAgent={}", userAgent);
-            Device newDevice = deviceService.addDevice(request, clientIp, userAgent, Instant.now());
-            DeviceResponse response = new DeviceResponse(newDevice.getDeviceId());
+            var response = deviceService.addDevice(request, clientIp, userAgent, Instant.now());
 
             log.info("register device success - deviceId={}", response.deviceId());
             return ResponseEntity.ok(response);
@@ -48,7 +48,7 @@ public class DeviceController {
     }
 
     @GetMapping("/{deviceId}")
-    public ResponseEntity<?> get(@PathVariable String deviceId, HttpServletRequest httpRequest) {
+    public ResponseEntity<DeviceResponse> get(@PathVariable String deviceId, HttpServletRequest httpRequest) {
         final String clientIp = RequestUtils.getClientIp(httpRequest);
         final String userAgent =  RequestUtils.getUserAgent(httpRequest);
 
@@ -63,13 +63,13 @@ public class DeviceController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllDevice(HttpServletRequest httpRequest) {
+    public ResponseEntity<List<DeviceResponse>> getAllDevice(HttpServletRequest httpRequest) {
         final String clientIp = RequestUtils.getClientIp(httpRequest);
         final String userAgent = RequestUtils.getUserAgent(httpRequest);
         log.info("[GET] deviceAll - clientIp={}, userAgent={}", clientIp, shortUserAgent(userAgent));
 
-        var devices = deviceService.getAllDevice();
-        return ResponseEntity.ok().body(devices);
+        var response = deviceService.getAllDevice();
+        return ResponseEntity.ok().body(response);
     }
 
     @PostMapping("/{deviceId}/check-in")
@@ -78,11 +78,8 @@ public class DeviceController {
         final String userAgent = RequestUtils.getUserAgent(httpRequest);
         log.info("[Post] checkIn - deviceId={}, clientIp={}, userAgent={}", deviceId, clientIp, shortUserAgent(userAgent));
 
-        var updated = deviceService.checkIn(deviceId, clientIp, userAgent, Instant.now());
-        var response = new DeviceCheckInResponse(
-                updated.getDeviceId(), updated.getFirstSeen(), updated.getLastSeen()
-        );
-        return ResponseEntity.ok(response);
+        var checkInResponse = deviceService.checkIn(deviceId, clientIp, userAgent, Instant.now());
+        return ResponseEntity.ok(checkInResponse);
     }
 
     @DeleteMapping("/{deviceId}")

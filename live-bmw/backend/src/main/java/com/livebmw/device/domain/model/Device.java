@@ -1,4 +1,4 @@
-package com.livebmw.device.domain;
+package com.livebmw.device.domain.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

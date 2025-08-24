@@ -1,4 +1,4 @@
-package com.livebmw.device.domain.dto;
+package com.livebmw.device.api.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

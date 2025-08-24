@@ -1,8 +1,11 @@
 package com.livebmw.device;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.livebmw.device.domain.Device;
-import com.livebmw.device.domain.dto.DeviceSaveRequest;
+import com.livebmw.device.api.DeviceController;
+import com.livebmw.device.application.DeviceService;
+import com.livebmw.device.domain.model.Device;
+import com.livebmw.device.api.dto.DeviceResponse;
+import com.livebmw.device.api.dto.DeviceSaveRequest;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +43,7 @@ class DeviceControllerTest {
         DeviceSaveRequest req = new DeviceSaveRequest(deviceId);
 
         when(deviceService.addDevice(eq(req), anyString(), anyString(), any()))
-                .thenReturn(new Device(deviceId, CLIENT_IP, USER_AGENT, Instant.now()));
+                .thenReturn(DeviceResponse.fromEntity(new Device(deviceId, CLIENT_IP, USER_AGENT, Instant.now())));
 
         mockMvc.perform(post("/api/devices")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -56,7 +59,7 @@ class DeviceControllerTest {
         String deviceId = "dev-1";
         Device device = new Device(deviceId, CLIENT_IP, USER_AGENT, Instant.now());
 
-        when(deviceService.getDeviceById(deviceId)).thenReturn(device);
+        when(deviceService.getDeviceById(deviceId)).thenReturn(DeviceResponse.fromEntity(device));
 
         mockMvc.perform(get("/api/devices/{deviceId}", deviceId)
                         .header("User-Agent", "UA")
@@ -73,7 +76,7 @@ class DeviceControllerTest {
                 new Device("d1", CLIENT_IP, USER_AGENT, Instant.now()),
                 new Device("d2", CLIENT_IP, USER_AGENT, Instant.now())
         );
-        when(deviceService.getAllDevice()).thenReturn(list);
+        when(deviceService.getAllDevice()).thenReturn(DeviceResponse.fromEntities(list));
 
         mockMvc.perform(get("/api/devices")
                         .header("User-Agent", "UA")
