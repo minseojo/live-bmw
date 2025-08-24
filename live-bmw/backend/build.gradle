@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.2-SNAPSHOT'
 description = 'Real-time Guide for Bus, Metro, and Walk Users'
 
 java {
@@ -26,6 +26,11 @@ repositories {
 
 dependencies {
 	runtimeOnly("com.h2database:h2")
+
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
 
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
