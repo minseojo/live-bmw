@@ -4,6 +4,14 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
+bootJar {
+	archiveFileName = 'app.jar' // 항상 app.jar로 산출
+}
+
+jar {
+	enabled = false // plain jar 아예 생성하지 않음 (권장)
+}
+
 group = 'com'
 version = '0.0.2-SNAPSHOT'
 description = 'Real-time Guide for Bus, Metro, and Walk Users'
