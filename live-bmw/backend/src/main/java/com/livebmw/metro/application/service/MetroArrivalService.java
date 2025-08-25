@@ -43,7 +43,7 @@ public class MetroArrivalService {
     @Autowired
     public MetroArrivalService(
             @Qualifier("seoulMetroWebClient") WebClient webClient,
-            @Value("${seoul.api.key}") String apiKey,
+            @Value("${seoul.live.metro.arrival.api.key}") String apiKey,
             org.springframework.beans.factory.ObjectProvider<Clock> clockProvider
     ) {
         this.webClient = webClient;
