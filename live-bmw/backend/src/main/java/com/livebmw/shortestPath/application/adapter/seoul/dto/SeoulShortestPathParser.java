@@ -12,6 +12,7 @@ public final class SeoulShortestPathParser {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private SeoulShortestPathParser() {}
+    
     public static ShortestPathPlan parseMinimal(String json) {
         try {
             JsonNode root = MAPPER.readTree(json);
@@ -36,9 +37,9 @@ public final class SeoulShortestPathParser {
                 String toLine   = optText(p, "arvlStn.lineNm");
                 String dir      = optText(p, "upbdnbSe");  // 옵션: 실시간(상/하행·내/외선) 필터용
 
-                legs.add(new ShortestPathPlan.Leg(
-                        fromName, fromLine, toName, toLine, dir
-                ));
+                ShortestPathPlan.Leg leg = new ShortestPathPlan.Leg(fromName, fromLine, toName, toLine, dir);
+
+                legs.add(leg);
             }
 
             return new ShortestPathPlan(searchType, List.copyOf(legs));
@@ -59,16 +60,5 @@ public final class SeoulShortestPathParser {
         JsonNode n = root;
         for (String k : path.split("\\.")) n = n.path(k);
         return n.isMissingNode() || n.isNull() ? null : n.asText();
-    }
-
-    private static int optInt(JsonNode root, String path) {
-        String s = optText(root, path);
-        if (s == null || s.isBlank()) return 0;
-        try { return Integer.parseInt(s); } catch (NumberFormatException ignore) {
-            // API가 숫자를 정수형으로 주기도 함
-            JsonNode n = root;
-            for (String k : path.split("\\.")) n = n.path(k);
-            return n.isInt() ? n.asInt() : 0;
-        }
     }
 }
