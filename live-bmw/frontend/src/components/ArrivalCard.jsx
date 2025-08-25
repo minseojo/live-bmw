@@ -37,8 +37,8 @@ function ensureHangSuffix(str) {
 export function ArrivalCard({ arrivalItem = {} }) {
     const lineId         = arrivalItem.lineId;                     // "1002" 이거나 실수로 "2호선"일 수도
     const lineName       = arrivalItem.lineName;                   // 있으면 활용
-    const direction      = arrivalItem.directionLabel ?? arrivalItem.direction ?? arrivalItem.updnLine ?? "";
-    const trainNumber    = arrivalItem.trainNumber ?? arrivalItem.trainNo ?? "—";
+    const direction      = arrivalItem.direction;
+    const trainNumber    = arrivalItem.trainNumber ?? "—";
     const trainLine      = "봉천역 승차";
     const trainLineSummary = arrivalItem.trainLineSummary ?? "";
     const message        = arrivalItem.message ?? "";
