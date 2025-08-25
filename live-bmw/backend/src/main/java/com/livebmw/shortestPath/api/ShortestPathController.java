@@ -1,7 +1,7 @@
 package com.livebmw.shortestPath.api;
 
 import com.livebmw.common.time.DateTimeUtil;
-import com.livebmw.shortestPath.api.dto.ShortestPathResponse;
+import com.livebmw.shortestPath.domain.ShortestPathPlan;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,10 +21,10 @@ public class ShortestPathController {
     private final ShortestPathService shortestPathService;
 
     @GetMapping
-    public ShortestPathResponse get(@RequestParam("from") String departureStationName,
-                                    @RequestParam("to") String arrivalStationName,
-                                    @RequestParam(value = "searchType", defaultValue = "duration") SearchType searchType,
-                                    @RequestParam(value = "when", required = false) String when) {
+    public ShortestPathPlan get(@RequestParam("from") String departureStationName,
+                                @RequestParam("to") String arrivalStationName,
+                                @RequestParam(value = "searchType", defaultValue = "duration") SearchType searchType,
+                                @RequestParam(value = "when", required = false) String when) {
         log.info("find shortest path {} to {}\nwhen: {}", departureStationName, arrivalStationName, when);
 
         if (when == null) {

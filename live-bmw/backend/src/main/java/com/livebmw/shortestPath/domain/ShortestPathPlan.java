@@ -1,8 +1,8 @@
-package com.livebmw.shortestPath.api.dto;
+package com.livebmw.shortestPath.domain;
 
 import java.util.List;
 
-public record ShortestPathResponse(
+public record ShortestPathPlan(
         String searchType,     // body.searchType (예: duration)
         List<Leg> legs         // 구간 리스트
 ) {

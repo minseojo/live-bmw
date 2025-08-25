@@ -22,11 +22,11 @@ public class SeoulShortestPathApi {
                 .GET()
                 .build();
 
-        HttpResponse<String> res = http.send(req, HttpResponse.BodyHandlers.ofString());
-        if (res.statusCode() != 200) {
-            throw new IOException("HTTP " + res.statusCode() + " calling getShtrmPath: " + res.body());
+        HttpResponse<String> response = http.send(req, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() != 200) {
+            throw new IOException("HTTP " + response.statusCode() + " calling getShtrmPath: " + response.body());
         }
-        return res.body();
+        return response.body();
     }
 }
 

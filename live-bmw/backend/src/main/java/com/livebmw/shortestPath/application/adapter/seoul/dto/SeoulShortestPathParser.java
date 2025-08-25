@@ -2,7 +2,7 @@ package com.livebmw.shortestPath.application.adapter.seoul.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.livebmw.shortestPath.api.dto.ShortestPathResponse;
+import com.livebmw.shortestPath.domain.ShortestPathPlan;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ public final class SeoulShortestPathParser {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private SeoulShortestPathParser() {}
-    public static ShortestPathResponse parseMinimal(String json) {
+    public static ShortestPathPlan parseMinimal(String json) {
         try {
             JsonNode root = MAPPER.readTree(json);
 
@@ -26,7 +26,7 @@ public final class SeoulShortestPathParser {
             JsonNode body = node(root, "body");
             String searchType = optText(body, "searchType");
 
-            List<ShortestPathResponse.Leg> legs = new ArrayList<>();
+            List<ShortestPathPlan.Leg> legs = new ArrayList<>();
             JsonNode paths = body.path("paths");
             for (int i = 0; i < paths.size(); i++) {
                 JsonNode p = paths.get(i);
@@ -36,12 +36,12 @@ public final class SeoulShortestPathParser {
                 String toLine   = optText(p, "arvlStn.lineNm");
                 String dir      = optText(p, "upbdnbSe");  // 옵션: 실시간(상/하행·내/외선) 필터용
 
-                legs.add(new ShortestPathResponse.Leg(
+                legs.add(new ShortestPathPlan.Leg(
                         fromName, fromLine, toName, toLine, dir
                 ));
             }
 
-            return new ShortestPathResponse(searchType, List.copyOf(legs));
+            return new ShortestPathPlan(searchType, List.copyOf(legs));
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse minimal ShortestPath JSON", e);

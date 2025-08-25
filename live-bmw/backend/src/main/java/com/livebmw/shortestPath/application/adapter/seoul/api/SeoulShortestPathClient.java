@@ -51,7 +51,6 @@ public class SeoulShortestPathClient {
                 "&arvlStnNm=" + encode(arrivalStationName) +
                 "&searchDt=" + encode(DateTimeUtil.formatKst(searchDateTime)) +
                 "&searchType=" + searchType.name();
-        System.out.println(url);
         return seoulShortestPathApi.get(url);
     }
 
