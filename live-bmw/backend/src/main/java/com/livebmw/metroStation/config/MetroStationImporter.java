@@ -3,6 +3,7 @@ package com.livebmw.metroStation.config;
 import com.livebmw.common.util.GeometryFactory4326;
 import com.livebmw.metroStation.domain.MetroStation;
 import com.livebmw.metroStation.domain.MetroStationRepository;
+import com.livebmw.metroStation.domain.model.MetroLine;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -45,52 +47,61 @@ public class MetroStationImporter {
         try (Reader reader = new InputStreamReader(csvResource.getInputStream(), StandardCharsets.UTF_8);
              CSVParser parser = CSVFormat.DEFAULT.builder().setHeader().setSkipHeaderRecord(true).build().parse(reader)) {
 
+            // 헤더 키
             final String COL_ID = "외구간_역_수";
             final String COL_NM = "역한글명칭";
             final String COL_LN = "호선명칭";
             final String COL_LON = "환승역X좌표";
             final String COL_LAT = "환승역Y좌표";
+            // 예시: 4128,삼성중앙,9호선(연장),127.053282,37.513011
 
-            int i = 0, bad = 0, ok = 0;
-            for (var r : parser) {
-                try {
-                    var id = safeGet(r, COL_ID).trim();
-                    var name = safeGet(r, COL_NM).trim();
-                    var line = safeGet(r, COL_LN).trim();
-                    var lon = Double.parseDouble(safeGet(r, COL_LON).trim());
-                    var lat = Double.parseDouble(safeGet(r, COL_LAT).trim());
-                    if (lon < 120 || lon > 135 || lat < 30 || lat > 45) {
-                        bad++;
-                        continue;
-                    }
-                    var st = new MetroStation(id, name, 0, line, geometryFactory4326.point(lon, lat));
-                    entityManager.merge(st);
-                    if (++i % 500 == 0) {
-                        entityManager.flush();
-                        entityManager.clear();
-                    }
-                    ok++;
-                } catch (Exception e) {
+            int count = 0, bad = 0, ok = 0;
+            for (var row : parser) {
+                var stationId = safeGet(row, COL_ID).trim();
+                var stationName = safeGet(row, COL_NM).trim();
+                String lineName = safeGet(row, COL_LN).trim();
+                log.info("[metro] importing station {}", lineName);
+                var lon = Double.parseDouble(safeGet(row, COL_LON).trim());
+                var lat = Double.parseDouble(safeGet(row, COL_LAT).trim());
+                if (lon < 120 || lon > 135 || lat < 30 || lat > 45) {
                     bad++;
-                    throw e;
+                    continue;
                 }
+
+                MetroLine metroLine = MetroLine.fromAny(lineName);
+                if (metroLine == null) {
+                    log.error("Metro line {} not found", lineName);
+                    return;
+                }
+                int lineId = metroLine.getCode();
+                lineName = metroLine.getDisplayName();
+
+                var station = new MetroStation(stationId, stationName, lineId, lineName, geometryFactory4326.point(lon, lat));
+                entityManager.merge(station);
+                if (++count % 500 == 0) {
+                    entityManager.flush();
+                    entityManager.clear();
+                }
+                ok++;
+
             }
             entityManager.flush();
             entityManager.clear();
             log.info("[metro] JPA import done. ok={}, bad={}", ok, bad);
         } catch (Exception e) {
             log.error("[metro] import failed", e);
-            throw e;
         }
     }
 
     private static String safeGet(CSVRecord record, String key) {
-        // direct hit
-        if (record.isMapped(key)) return record.get(key);
-        // BOM-prefixed key
+        if (record.isMapped(key)) {
+            return record.get(key);
+        }
         String bomKey = "\uFEFF" + key;
-        if (record.isMapped(bomKey)) return record.get(bomKey);
-        // header map fallback: strip BOM from keys
+        if (record.isMapped(bomKey)) {
+            return record.get(bomKey);
+        }
+
         Map<String, String> map = record.toMap();
         for (Map.Entry<String, String> e : map.entrySet()) {
             String k = stripBom(e.getKey());

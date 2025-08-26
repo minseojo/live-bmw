@@ -10,7 +10,7 @@ import java.util.List;
  * - 도메인 MetroArrival -> 클라이언트 응답 뷰 모델 변환
  */
 public record MetroArrivalResponse(
-        String lineId,           // ex) "1002"
+        int lineId,           // ex) "1002"
         String lineName,
         String direction,   // ex) "내선"/"외선" 또는 "상행"/"하행"
         String trainLineSummary, // ex) "성수행 - 봉천방면"

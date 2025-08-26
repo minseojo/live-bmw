@@ -16,7 +16,7 @@ public class MetroArrivalXml {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Row {
-        @JacksonXmlProperty(localName = "subwayId")  public String subwayId;   // 1002 = 2호선, 지하철호선ID
+        @JacksonXmlProperty(localName = "subwayId")  public Integer lineId;   // 1002 = 2호선, 지하철호선ID
         @JacksonXmlProperty(localName = "updnLine")  public String updnLine;   // 상행/하행/내선/외선
         @JacksonXmlProperty(localName = "trainLineNm") public String trainLineNm; // 성수행 - 봉천방면
         @JacksonXmlProperty(localName = "statnId")   public String statnId;     // 지하철역ID, 예: 1002000228

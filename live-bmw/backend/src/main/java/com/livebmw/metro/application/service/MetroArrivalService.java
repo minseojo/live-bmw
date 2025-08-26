@@ -49,9 +49,9 @@ public class MetroArrivalService {
 
             return root.rows.stream()
                     .map(row -> {
-                        final String lineName = mapMetroLineName(row.subwayId);
+                        final String lineName = mapMetroLineName(row.lineId);
                         return new MetroArrival(
-                                row.subwayId,
+                                row.lineId,
                                 lineName,
                                 row.updnLine,
                                 row.trainLineNm,
@@ -68,7 +68,7 @@ public class MetroArrivalService {
         }
     }
 
-    private String mapMetroLineName(String metroId) {
+    private String mapMetroLineName(Integer metroId) {
         return MetroLine.toDisplayName(metroId);
     }
 }
