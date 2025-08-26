@@ -11,7 +11,18 @@ public enum MetroLine {
     LINE_6("1006", "6호선"),
     LINE_7("1007", "7호선"),
     LINE_8("1008", "8호선"),
-    LINE_9("1009", "9호선");
+    LINE_9("1009", "9호선"),
+
+    JUNGANG("1061", "중앙선"),
+    GYEONGUI_JUNGANG("1063", "경의중앙선"),
+    AIRPORT("1065", "공항철도"),
+    GYEONGCHUN("1067", "경춘선"),
+    SUIN_BUNDANG("1075", "수인분당선"),
+    SHINBUNDANG("1077", "신분당선"),
+    WUI_SINSEOL("1092", "우이신설선"),
+    SEOHAE("1093", "서해선"),
+    GYEONGGANG("1081", "경강선"),
+    GTX_A("1032", "GTX-A");
 
     private final String code;
     private final String displayName;
@@ -21,7 +32,6 @@ public enum MetroLine {
         this.displayName = displayName;
     }
 
-    /** 코드 → enum 매핑 (없으면 null) */
     public static MetroLine of(String code) {
         return Arrays.stream(values())
                 .filter(line -> line.code.equals(code))
@@ -29,14 +39,15 @@ public enum MetroLine {
                 .orElse(null);
     }
 
-    /** 코드 → 표시명 (없으면 원본 코드 그대로) */
     public static String toDisplayName(String code) {
         MetroLine line = of(code);
         return (line != null) ? line.displayName : code;
     }
 
     public static boolean matches(String code, String displayName) {
-        for (var l : values()) if (l.code.equals(code) && l.displayName.equals(displayName)) return true;
+        for (var line : values()) {
+            if (line.code.equals(code) && line.displayName.equals(displayName)) return true;
+        }
         return false;
     }
 }

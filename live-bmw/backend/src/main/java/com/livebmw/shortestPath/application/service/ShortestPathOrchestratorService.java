@@ -3,7 +3,6 @@ package com.livebmw.shortestPath.application.service;
 import com.livebmw.metro.api.dto.MetroArrivalResponse;
 import com.livebmw.metro.application.service.MetroArrivalService;
 import com.livebmw.metro.domain.model.MetroArrival;
-import com.livebmw.metro.domain.model.MetroDirection;
 import com.livebmw.shortestPath.api.dto.KeyStation;
 import com.livebmw.shortestPath.api.dto.ShortedPathResponse;
 import com.livebmw.shortestPath.application.adapter.seoul.api.SeoulShortestPathClient.SearchType;
@@ -41,7 +40,7 @@ public class ShortestPathOrchestratorService {
             arrivalsByStation.put(
                     station,
                     arrivals.stream()
-                            .filter(arrival -> station.direction().equals(arrival.directionLabel()))
+                            .filter(arrival -> station.direction().equals(arrival.direction()))
                             .map(MetroArrivalResponse::from)
                             .collect(Collectors.toList())
             );
@@ -68,10 +67,8 @@ public class ShortestPathOrchestratorService {
             // 첫 번째 leg의 출발역은 항상 추가 (최초 탑승역)
             if (i == 0) {
                 String stationKey = currentFromName + ":" + currentDirection;
-                if (!processedStations.contains(stationKey)) {
-                    stations.add(new KeyStation(currentFromName, currentDirection));
-                    processedStations.add(stationKey);
-                }
+                stations.add(new KeyStation(currentFromName, currentDirection));
+                processedStations.add(stationKey);
                 continue;
             }
             

@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +49,7 @@ public class MetroRouteArrivalService {
         final List<MetroArrival> arrivalsAtOrigin = arrivalService.fetchArrivals(origin);
 
         final List<MetroArrival> filtered = arrivalsAtOrigin.stream()
-                .filter(a -> matchesDirection(displayDir, a.directionLabel()))
+                .filter(a -> matchesDirection(displayDir, a.direction()))
                 .limit(req.limitOrDefault())
                 .toList();
 

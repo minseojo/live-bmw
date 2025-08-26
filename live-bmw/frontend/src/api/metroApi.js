@@ -1,4 +1,5 @@
 import {post} from './baseApi';
+import {get} from './baseApi';
 
 // 라우트 응답 전체 변환
 function adaptRoute(res) {
@@ -46,4 +47,62 @@ export async function fetchRouteArrivals(req) {
         resultLimit: req.resultLimit,
     });
     return adaptRoute(raw);
+}
+
+
+// =========================
+// 최단경로 + 환승 도착 (신규)
+// GET /api/shortestPath/with-arrivals?from=...&to=...&searchType=duration&when=...
+// 응답 예시
+// {
+//   keyStations: [{ stationName, direction }, ...],
+//   arrivalsByStation: {
+//     "KeyStation[stationName=봉천, direction=외선]": [ { ...arrival }, ... ],
+//     ...
+//   }
+// }
+
+function buildKeyStationString(ks) {
+    // 서버 키 포맷과 동일하게 생성
+    return `KeyStation[stationName=${ks.stationName}, direction=${ks.direction}]`;
+}
+
+function adaptShortestPathResponse(res) {
+    const keyStations = Array.isArray(res?.keyStations) ? res.keyStations : [];
+    const arrivalsByStation = res?.arrivalsByStation || {};
+
+    const groups = keyStations.map((ks) => {
+        const key = buildKeyStationString(ks);
+        const arrivals = Array.isArray(arrivalsByStation[key]) ? arrivalsByStation[key] : [];
+        return {
+            stationName: ks.stationName,
+            direction: ks.direction,
+            arrivals: arrivals.map(adaptArrival)
+        };
+    });
+
+    // 편의상 평탄화 리스트도 제공
+    const flatArrivals = groups.flatMap(g => g.arrivals.map(a => ({ ...a, _stationName: g.stationName, _direction: g.direction })));
+
+    return {
+        keyStations,
+        groups,
+        arrivalsByStation: groups.reduce((acc, g) => { acc[buildKeyStationString(g)] = g.arrivals; return acc; }, {}),
+        flatArrivals,
+    };
+}
+
+export async function fetchShortestPathWithArrivals({ from, to, when, searchType = 'duration' }) {
+    const raw = await get('/api/shortestPath/with-arrivals', { query: { from, to, when, searchType } });
+    return adaptShortestPathResponse(raw || {});
+}
+
+// 여러 기준을 병렬로 조회 (duration, distance, transfer)
+export async function fetchMultiCriteriaShortestPaths({ from, to, when, criteriaList = ['duration'] }) {
+    const unique = Array.from(new Set(criteriaList));
+    const results = await Promise.all(unique.map(async (c) => {
+        const data = await fetchShortestPathWithArrivals({ from, to, when, searchType: c });
+        return [c, data];
+    }));
+    return Object.fromEntries(results);
 }
