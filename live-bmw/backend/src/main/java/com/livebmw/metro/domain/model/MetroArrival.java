@@ -1,4 +1,3 @@
-// com.livebmw.metro.domain.model.MetroArrival
 package com.livebmw.metro.domain.model;
 
 import java.time.LocalDateTime;

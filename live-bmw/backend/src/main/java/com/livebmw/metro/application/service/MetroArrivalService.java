@@ -2,22 +2,16 @@ package com.livebmw.metro.application.service;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.livebmw.common.time.DateTimeUtil;
-import com.livebmw.metro.api.dto.MetroArrivalResponse;
 import com.livebmw.metro.application.adapter.seoul.dto.MetroArrivalXml;
 import com.livebmw.metro.domain.model.MetroArrival;
-import com.livebmw.metro.domain.model.MetroLine;
-import com.livebmw.util.ArvlMsgParser;
+import com.livebmw.metroStation.domain.model.MetroLine;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriUtils;
 
-import java.nio.charset.StandardCharsets;
-import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 

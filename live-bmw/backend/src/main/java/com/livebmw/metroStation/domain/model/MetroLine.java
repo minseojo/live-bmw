@@ -1,4 +1,4 @@
-package com.livebmw.metro.domain.model;
+package com.livebmw.metroStation.domain.model;
 
 import java.util.Arrays;
 

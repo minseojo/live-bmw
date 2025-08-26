@@ -1,3 +1,3 @@
-package com.livebmw.metro.domain.model;
+package com.livebmw.metroStation.domain.model;
 
 public enum MetroDirection { UP, DOWN, INNER, OUTER }
