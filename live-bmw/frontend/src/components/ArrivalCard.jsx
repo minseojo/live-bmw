@@ -29,25 +29,17 @@ function getRemainingSeconds(item = {}) {
     return eta == null ? null : Math.max(0, Math.floor(eta));
 }
 
-function ensureHangSuffix(str) {
-    if (!str) return "";
-    return /행$/.test(str) ? str : `${str}행`;
-}
-
-export function ArrivalCard({ arrivalItem = {} }) {
-    const lineId         = arrivalItem.lineId;                     // "1002" 이거나 실수로 "2호선"일 수도
+export function ArrivalCard({ arrivalItem = {}, contextLabel }) {
+    const lineId         = arrivalItem.lineId;                     // "1002"
     const lineName       = arrivalItem.lineName;                   // 있으면 활용
     const direction      = arrivalItem.direction;
-    const trainNumber    = arrivalItem.trainNumber ?? "—";
-    const trainLine      = "봉천역 승차";
+    const trainLine      = contextLabel ?? "도착 정보";
     const trainLineSummary = arrivalItem.trainLineSummary ?? "";
-    const message        = arrivalItem.message ?? "";
-    const receivedAt     = arrivalItem.receivedAt ?? "—";
+    // const receivedAt     = arrivalItem.receivedAt ?? "—";
     const eta            = getRemainingSeconds(arrivalItem);
 
     const isInner        = direction === "내선" || direction === "상행";
 
-    // ✅ 라인 배지 색 계산
     const isL2 = isLine2(lineId, lineName);
     const badgeBg = isL2 ? "rgba(0,168,77,0.12)" : "#f1f5f9";
     const badgeFg = isL2 ? LINE2_COLOR : "#334155";
@@ -58,15 +50,12 @@ export function ArrivalCard({ arrivalItem = {} }) {
     return (
         <div style={{ padding: 14, border: "1px solid #e5e7eb", borderRadius: 14, background: "#fff", boxShadow: "0 1px 2px rgba(0,0,0,0.03)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                {/* ✅ 라인 배지 (lineId 초록칠) */}
                 <span style={{
-                    display: "inline-flex", alignItems: "center", gap: 6,
-                    padding: "4px 8px", borderRadius: 999, fontSize: 12, fontWeight: 700,
-                    background: badgeBg, color: badgeFg, border: `1px solid ${badgeBd}`
-                }}>
-          <span style={{ width: 8, height: 8, borderRadius: 999, background: badgeDot }} />
-                    {badgeLabel}
-        </span>
+                        display: "inline-flex", alignItems: "center", gap: 6,
+                        padding: "4px 8px", borderRadius: 999, fontSize: 12, fontWeight: 700,
+                        background: badgeBg, color: badgeFg, border: `1px solid ${badgeBd}`}}>
+                    <span style={{ width: 8, height: 8, borderRadius: 999, background: badgeDot }} />{badgeLabel}
+                </span>
 
                 <div style={{ fontWeight: 700 }}>{trainLine}</div>
 
@@ -74,13 +63,9 @@ export function ArrivalCard({ arrivalItem = {} }) {
                     marginLeft: 8, fontSize: 12, padding: "2px 8px", borderRadius: 999,
                     background: isInner ? "#d1fae5" : "#e0e7ff",
                     color: isInner ? "#065f46" : "#3730a3"
-                }}>
-          {direction || "—"}
-        </span>
-
-                <span style={{ marginLeft: "auto", color: "#6b7280", fontSize: 12 }}>
-          열차번호 {trainNumber}
-        </span>
+                        }}>
+                  {direction || "—"}
+                </span>
             </div>
 
             <div style={{ marginTop: 4, color: "#6b7280", fontSize: 14 }}>
@@ -89,10 +74,6 @@ export function ArrivalCard({ arrivalItem = {} }) {
 
             <div style={{ marginTop: 8, display: "flex", alignItems: "baseline", gap: 12 }}>
                 <div style={{ fontSize: 28, fontWeight: 800 }}>{formatEtaKorean(eta)}</div>
-                <div style={{ color: "#6b7280" }}>{message}</div>
-                <div style={{ marginLeft: "auto", color: "#6b7280", fontSize: 12 }}>
-                    수신시각 {receivedAt}
-                </div>
             </div>
         </div>
     );
