@@ -55,7 +55,7 @@ public class MetroArrivalService {
                                 lineName,
                                 row.updnLine,
                                 row.trainLineNm,
-                                row.statnNm,
+                                row.statnId,
                                 row.barvlDt,
                                 DateTimeUtil.parseKst(row.recptnDt)
                         );
