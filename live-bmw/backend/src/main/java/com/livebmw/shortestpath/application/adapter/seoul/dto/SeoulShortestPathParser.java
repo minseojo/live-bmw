@@ -1,0 +1,69 @@
+package com.livebmw.shortestpath.application.adapter.seoul.dto;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.livebmw.shortestpath.domain.ShortestPathPlan;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Slf4j
+public final class SeoulShortestPathParser {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    private SeoulShortestPathParser() {}
+    
+    public static ShortestPathPlan parseMinimal(String json) {
+        try {
+            JsonNode root = MAPPER.readTree(json);
+
+            // 헤더 체크
+            String code = optText(root, "header.resultCode");
+            if (!"00".equals(code)) {
+                String msg = optText(root, "header.resultMsg");
+                throw new IllegalStateException("ShortestPath API error: " + code + " - " + msg);
+            }
+
+            JsonNode body = node(root, "body");
+            String searchType = optText(body, "searchType");
+
+            List<ShortestPathPlan.Leg> legs = new ArrayList<>();
+            JsonNode paths = body.path("paths");
+            for (int i = 0; i < paths.size(); i++) {
+                JsonNode p = paths.get(i);
+                String fromName = optText(p, "dptreStn.stnNm");
+                String fromLine = optText(p, "dptreStn.lineNm");
+                String toName   = optText(p, "arvlStn.stnNm");
+                String toLine   = optText(p, "arvlStn.lineNm");
+                String dir      = optText(p, "upbdnbSe");  // 옵션: 실시간(상/하행·내/외선) 필터용
+
+                ShortestPathPlan.Leg leg = new ShortestPathPlan.Leg(fromName, fromLine, toName, toLine, dir);
+
+                legs.add(leg);
+            }
+
+            log.info(legs.toString());
+
+            return new ShortestPathPlan(searchType, List.copyOf(legs));
+
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new RuntimeException("Failed to parse minimal ShortestPath JSON", e);
+        }
+    }
+
+    private static JsonNode node(JsonNode root, String path) {
+        JsonNode n = root;
+        for (String k : path.split("\\.")) n = n.path(k);
+        if (n.isMissingNode() || n.isNull()) throw new IllegalArgumentException("Missing node: " + path);
+        return n;
+    }
+
+    private static String optText(JsonNode root, String path) {
+        JsonNode n = root;
+        for (String k : path.split("\\.")) n = n.path(k);
+        return n.isMissingNode() || n.isNull() ? null : n.asText();
+    }
+}

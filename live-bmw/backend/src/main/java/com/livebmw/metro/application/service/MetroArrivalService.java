@@ -4,7 +4,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.livebmw.common.time.DateTimeUtil;
 import com.livebmw.metro.application.adapter.seoul.dto.MetroArrivalXml;
 import com.livebmw.metro.domain.model.MetroArrival;
-import com.livebmw.metroStation.domain.model.MetroLine;
+import com.livebmw.metrostation.application.service.MetroLineService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,12 +23,16 @@ public class MetroArrivalService {
     private final WebClient webClient;
     private final XmlMapper xmlMapper = new XmlMapper();
 
+    private final MetroLineService metroLineService;
+
     @Autowired
     public MetroArrivalService(
             @Qualifier("seoulMetroWebClient") WebClient webClient,
-            @Value("${seoul.live.metro.arrival.api.key}") String apiKey) {
+            @Value("${seoul.live.metro.arrival.api.key}") String apiKey,
+            MetroLineService metroLineService) {
         this.webClient = webClient;
         this.apiKey = apiKey;
+        this.metroLineService = metroLineService;
     }
 
     /** 서울시 실시간 도착 정보 조회 (역명 기준) */
@@ -64,11 +68,12 @@ public class MetroArrivalService {
                     .limit(5)
                     .toList();
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             throw new RuntimeException("Failed to parse Seoul subway XML", e);
         }
     }
 
     private String mapMetroLineName(Integer metroId) {
-        return MetroLine.toDisplayName(metroId);
+        return metroLineService.toDisplayName(metroId);
     }
 }
