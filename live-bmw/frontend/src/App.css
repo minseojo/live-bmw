@@ -328,3 +328,38 @@ html, body, #root {
 .footer { margin-bottom: 0 !important; }
 input, textarea, select { -webkit-text-fill-color: #0f172a; color: #0f172a; }
 :root { color-scheme: light; }
+
+/* 전역 색 체계: 항상 라이트로 고정 */
+:root {
+  color-scheme: light;        /* UA가 다크용 색 자동 변경 못 하게 */
+}
+
+/* 문서 기본 텍스트/배경 색도 명시적으로 고정 */
+html, body {
+  color: #0f172a;             /* 텍스트 */
+  background: #f8fafc;        /* 배경 */
+}
+/* 입력, 선택 컨트롤: 항상 진한 글자색 + 흰 배경 고정 */
+input, textarea, select {
+  color: #0f172a !important;                 /* 텍스트 */
+  background-color: #ffffff !important;      /* 배경 */
+  -webkit-text-fill-color: #0f172a !important; /* iOS Safari 글자색 */
+  caret-color: #0f172a !important;           /* 캐럿 */
+  appearance: none;                          /* iOS 기본스킨 영향 최소화 */
+}
+
+/* 플레이스홀더도 확실히 보이게 */
+input::placeholder,
+textarea::placeholder {
+  color: #9ca3af !important;
+  opacity: 1 !important;
+}
+
+/* iOS 오토필(노란 배경) 무력화 + 글자색 유지 */
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: #0f172a !important;
+  box-shadow: 0 0 0 1000px #ffffff inset !important; /* 배경을 흰색으로 덮기 */
+  transition: background-color 9999s ease-out 0s !important; /* 깜빡임 방지 */
+}
