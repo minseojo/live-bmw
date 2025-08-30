@@ -174,3 +174,27 @@
 
 /* ========= Hover ========= */
 button:hover { box-shadow: 0 10px 24px rgba(79,70,229,.16); }
+
+/* Route Chip */
+
+.route-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 12px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1.5px solid currentColor; /* 라인 컬러 */
+  background: rgba(255, 255, 255, 0.8); /* 연한 배경 */
+  color: currentColor;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  white-space: nowrap;
+}
+
+
+.route-arrow {
+  font-weight: 900;
+  color: #64748b;
+}
+
