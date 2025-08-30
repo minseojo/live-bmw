@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/devices")
@@ -28,7 +29,7 @@ public class DeviceController {
     public ResponseEntity<DeviceResponse> register(
             @Valid @RequestBody DeviceSaveRequest request,
             HttpServletRequest httpRequest) {
-  
+
         final String clientIp = RequestUtils.getClientIp(httpRequest);
         final String userAgent = shortUserAgent(RequestUtils.getUserAgent(httpRequest));
         final String requestDeviceId = safe(request.deviceId()); // null-safe
@@ -62,14 +63,22 @@ public class DeviceController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<List<DeviceResponse>> getAllDevice(HttpServletRequest httpRequest) {
-        final String clientIp = RequestUtils.getClientIp(httpRequest);
-        final String userAgent = RequestUtils.getUserAgent(httpRequest);
-        log.info("[GET] deviceAll - clientIp={}, userAgent={}", clientIp, shortUserAgent(userAgent));
+//    @GetMapping
+//    public ResponseEntity<List<DeviceResponse>> getAllDevice(HttpServletRequest httpRequest) {
+//        final String clientIp = RequestUtils.getClientIp(httpRequest);
+//        final String userAgent = RequestUtils.getUserAgent(httpRequest);
+//        log.info("[GET] deviceAll - clientIp={}, userAgent={}", clientIp, shortUserAgent(userAgent));
+//
+//        var response = deviceService.getAllDevice();
+//        return ResponseEntity.ok().body(response);
+//    }
 
-        var response = deviceService.getAllDevice();
-        return ResponseEntity.ok().body(response);
+    @GetMapping("/ping")
+    public String ping() { return "ok"; }
+
+    @PostMapping("/echo")
+    public Map<String, Object> echo(@RequestBody(required = false) Map<String, Object> body) {
+        return Map.of("received", body);
     }
 
     @PostMapping("/{deviceId}/check-in")
