@@ -1,0 +1,20 @@
+.ssi-wrap { position: relative; }
+.ssi-input {
+    height: 40px; padding: 10px 12px; border-radius: 12px;
+    border: 1px solid #e5e7eb; background: #fff; font-size: 14px; width: 100%;
+    box-sizing: border-box;
+}
+.ssi-panel {
+    position: absolute; z-index: 20; left: 0; right: 0; margin-top: 6px;
+    background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(2,6,23,0.06); list-style: none; padding: 6px;
+    max-height: 280px; overflow: auto;
+}
+.ssi-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 10px; border-radius: 10px; cursor: pointer;
+}
+.ssi-item:hover, .ssi-item.is-active { background: #f1f5f9; }
+.ssi-name { font-weight: 600; }
+.ssi-line { color: #64748b; font-size: 12px; margin-left: 8px; }
+.ssi-empty { color: #64748b; font-size: 13px; text-align: center; }

@@ -3,6 +3,15 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+
+  --z-panel: 1;
+  --z-nearest: 100;   /* 주변역 목록 */
+  --z-search: 200;    /* 자동완성 드롭다운 */
+}
+
+.panel {
+  position: relative;
+  z-index: var(--z-panel);
 }
 
 .logo {
