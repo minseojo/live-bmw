@@ -16,7 +16,12 @@ html, body, #root {
 }
 
 /* ===== 모바일 우선 ===== */
-#root, .app-root { min-height: 100svh; min-height: -webkit-fill-available; }
+#root, .app-root {
+  min-height: 100svh;          /* 화면 꽉 채우기 */
+  min-height: -webkit-fill-available; /* iOS fallback */
+  display: flex;
+  flex-direction: column;      /* 세로로 배치 */
+}
 
 .bg-gradient {
   position: fixed;
@@ -28,11 +33,10 @@ html, body, #root {
 }
 
 .container {
-  width: 100%;          /* 100vw 대신 100% → 가로 스크롤 방지 */
-  max-width: 100%;
-  margin: 0 auto;
+  flex: 1;                     /* 남는 높이 다 차지 */
+  width: 100%;
   padding: 16px 12px 24px;
-  overflow-x: hidden;   /* 혹시 모를 넘침 차단 */
+  box-sizing: border-box;
 }
 
 /* 헤더 */
@@ -192,22 +196,6 @@ html, body, #root {
   padding: 12px; border: 1px dashed #e5e7eb; border-radius: 10px; color: #6b7280;
 }
 
-/* 푸터 */
-/* ===== Footer ===== */
-.footer {
-  position: relative;           /* 고정 아님: 본문 아래로 */
-  margin-top: 40px;             /* 콘텐츠와 여백 */
-  margin-bottom: 0;   /* ← 아래쪽 여백 제거 */
-  padding: 16px 12px;
-  text-align: center;
-  font-size: 13px;
-  color: #64748b;
-  z-index: 10;                  /* 드롭다운보다 낮게 */
-}
-
-.footer .muted-small {
-  margin: 4px 0;
-}
 
 /* 드롭다운은 항상 최상위 */
 .ssi-panel,
@@ -297,17 +285,21 @@ html, body, #root {
   z-index: 1000;             /* footer/패널보다 높게 */
 }
 
-/* ===== Footer: 본문 아래에 자연스럽게 위치 ===== */
+/* ===== Footer ===== */
 .footer {
-  position: relative;        /* 고정 아님 */
-  margin-top: 40px;          /* 본문과 간격 */
+  position: relative;           /* 고정 아님: 본문 아래로 */
+  margin-top: 40px;             /* 콘텐츠와 여백 */
+  margin-bottom: 0;   /* ← 아래쪽 여백 제거 */
   padding: 16px 12px;
   text-align: center;
   font-size: 13px;
   color: #64748b;
-  z-index: 1;                /* 드롭다운보다 낮게 */
+  z-index: 10;                  /* 드롭다운보다 낮게 */
 }
-.footer .muted-small { margin: 4px 0; }
+
+.footer .muted-small {
+  margin: 4px 0;
+}
 
 /* 데스크톱에서 검색 카드 살짝 키우기(선택) */
 @media (min-width: 1024px) {
@@ -363,3 +355,26 @@ select:-webkit-autofill {
   box-shadow: 0 0 0 1000px #ffffff inset !important; /* 배경을 흰색으로 덮기 */
   transition: background-color 9999s ease-out 0s !important; /* 깜빡임 방지 */
 }
+
+/* 1) sticky footer가 뷰포트 바닥에 딱 붙게: 최신/구형 브라우저 순서 */
+#root, .app-root {
+  min-height: 100svh;                 /* 최소 뷰포트 */
+  min-height: -webkit-fill-available; /* iOS 구버전 fallback */
+  min-height: 100dvh;                 /* 동적 뷰포트 (툴바 접힘/펼침 따라) */
+  display: flex; flex-direction: column;
+}
+
+/* 2) 본문이 남는 공간 채우기 */
+.container { flex: 1; }
+
+/* 3) footer는 고정 X, 바닥 밀착 + iOS 하단 안전영역 흡수 */
+.footer {
+  position: relative;
+  margin: 0;                          /* 아래 빈공간 방지 */
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+}
+
+/* 4) iOS가 오토 다크로 색 바꾸는 것 차단 + 입력 글자 항상 보이게(옵션) */
+:root { color-scheme: light; }
+input, textarea, select { color:#0f172a; -webkit-text-fill-color:#0f172a; }
+
