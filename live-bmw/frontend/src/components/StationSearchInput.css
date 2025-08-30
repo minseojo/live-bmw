@@ -1,20 +1,51 @@
-.ssi-wrap { position: relative; }
+.ssi-wrap { position: relative; width: 100%; }
 .ssi-input {
-    height: 40px; padding: 10px 12px; border-radius: 12px;
-    border: 1px solid #e5e7eb; background: #fff; font-size: 14px; width: 100%;
+    width: 100%;
+    min-height: 40px;
+    padding: 10px 12px;
+    font-size: 15px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
     box-sizing: border-box;
 }
+
+/* 드롭다운 패널 */
 .ssi-panel {
-    position: absolute; z-index: 20; left: 0; right: 0; margin-top: 6px;
-    background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(2,6,23,0.06); list-style: none; padding: 6px;
-    max-height: 280px; overflow: auto;
+    position: absolute;
+    top: calc(100% + 4px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(2,6,23,0.08);
+    max-height: 280px;
+    overflow-y: auto;
+    z-index: 200;
+
+    /* 모바일에서 안전폭 */
+    max-width: 92vw;
 }
+
+/* 정렬 방향 전환 (목적지 입력처럼 오른쪽 끝이면 오른쪽 정렬) */
+.ssi-panel.is-left  { left: 0; right: auto; }
+.ssi-panel.is-right { right: 0; left: auto; }
+
+/* 아이템 */
 .ssi-item {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 8px 10px; border-radius: 10px; cursor: pointer;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
 }
 .ssi-item:hover, .ssi-item.is-active { background: #f1f5f9; }
-.ssi-name { font-weight: 600; }
-.ssi-line { color: #64748b; font-size: 12px; margin-left: 8px; }
-.ssi-empty { color: #64748b; font-size: 13px; text-align: center; }
+.ssi-name { font-weight: 700; }
+.ssi-line { margin-left: 6px; font-size: 12px; color: #64748b; }
+
+/* 모바일에서 아이템 padding 살짝 줄이기 */
+@media (max-width: 480px) {
+    .ssi-item { padding: 10px; }
+}

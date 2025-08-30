@@ -1,7 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import ReactDOM from "react-dom";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useStationSearch } from "../hooks/useStationSearch";
-import { usePortalPosition } from "../hooks/usePortalPosition";
 import { LineBadge } from "./LineBadge";
 import "./StationSearchInput.css";
 
@@ -15,20 +13,45 @@ export function StationSearchInput({
     const { query, setQuery, results } = useStationSearch({ stations });
     const [open, setOpen] = useState(false);
     const [active, setActive] = useState(0);
+    const [alignRight, setAlignRight] = useState(false);
+    const [panelWidth, setPanelWidth] = useState(null);
 
     const wrapRef = useRef(null);
     const inputRef = useRef(null);
-    const rect = usePortalPosition(inputRef, { offsetY: 6 });
 
     useEffect(() => { setQuery(value || ""); }, [value, setQuery]);
 
     useEffect(() => {
-        const onDoc = (e) => {
+        const handleDoc = (e) => {
             if (!wrapRef.current?.contains(e.target)) setOpen(false);
         };
-        document.addEventListener("mousedown", onDoc);
-        return () => document.removeEventListener("mousedown", onDoc);
+        document.addEventListener("mousedown", handleDoc);
+        return () => document.removeEventListener("mousedown", handleDoc);
     }, []);
+
+    useLayoutEffect(() => {
+        if (!open) return;
+        const update = () => {
+            const anchor = inputRef.current;
+            if (!anchor) return;
+            const r = anchor.getBoundingClientRect();
+            const vw = window.innerWidth || document.documentElement.clientWidth;
+            const MIN = 360;
+            const maxPx = Math.floor(vw * 0.92);
+            const desired = Math.min(Math.max(r.width, MIN), maxPx);
+            const margin = 8;
+            const overflowRight = r.left + desired > vw - margin;
+            setAlignRight(overflowRight);
+            setPanelWidth(desired);
+        };
+        update();
+        window.addEventListener("resize", update);
+        window.addEventListener("scroll", update, true);
+        return () => {
+            window.removeEventListener("resize", update);
+            window.removeEventListener("scroll", update, true);
+        };
+    }, [open]);
 
     const apply = (item) => {
         const name = item?.station_name || item?.stationName || "";
@@ -37,42 +60,6 @@ export function StationSearchInput({
         setQuery(name);
         setOpen(false);
     };
-
-    const Panel = (
-        <ul
-            className="ssi-panel"
-            style={{
-                position: "fixed",
-                top: rect?.top ?? -9999,
-                left: rect?.left ?? -9999,
-                width: rect?.width ?? undefined,
-                zIndex: 200, // 검색 드롭다운: 최상위
-            }}
-        >
-            {results.length === 0 ? (
-                <li className="ssi-item ssi-empty">결과 없음</li>
-            ) : (
-                results.map((s, i) => (
-                    <li
-                        key={s._key || `${s.station_name || s.stationName}-${i}`}
-                        className={`ssi-item ${i === active ? "is-active" : ""}`}
-                        onMouseEnter={() => setActive(i)}
-                        onMouseDown={(e) => { e.preventDefault(); apply(s); }}
-                    >
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <LineBadge
-                                lineId={s.line_id || s.lineId}
-                                lineName={s.line_name || s.lineName}
-                                label={s.line_name || s.lineName}
-                                size="sm"
-                            />
-                            <span className="ssi-name">{s.station_name || s.stationName}</span>
-                        </div>
-                    </li>
-                ))
-            )}
-        </ul>
-    );
 
     return (
         <div className="ssi-wrap" ref={wrapRef}>
@@ -91,7 +78,30 @@ export function StationSearchInput({
                     if (e.key === "Escape")    { setOpen(false); }
                 }}
             />
-            {open && rect && ReactDOM.createPortal(Panel, document.body)}
+
+            {open && results.length > 0 && (
+                <ul
+                    className={`ssi-panel ${alignRight ? "is-right" : "is-left"}`}
+                    style={{ width: panelWidth ?? "100%" }}
+                >
+                    {results.map((s, i) => (
+                        <li
+                            key={s._key || `${s.station_name || s.stationName}-${i}`}
+                            className={`ssi-item ${i === active ? "is-active" : ""}`}
+                            onMouseEnter={() => setActive(i)}
+                            onMouseDown={(e) => { e.preventDefault(); apply(s); }}
+                        >
+                            <LineBadge
+                                lineId={s.line_id || s.lineId}
+                                lineName={s.line_name || s.lineName}
+                                label={s.line_name || s.lineName}
+                                size="sm"
+                            />
+                            <span className="ssi-name">{s.station_name || s.stationName}</span>
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     );
 }

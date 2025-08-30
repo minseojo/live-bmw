@@ -1,34 +1,58 @@
-.nsb-wrap { position: relative; display: inline-block; }
+.nsb-wrap { position: relative; }
+
 .nsb-trigger {
-    padding: 8px 12px; border-radius: 10px; border: 1px solid #e5e7eb;
-    background: #fff; font-size: 13px; cursor: pointer;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    cursor: pointer;
 }
+
 .nsb-panel {
-    position: absolute; z-index: 30; left: 0; margin-top: 6px; min-width: 280px;
-    background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(2,6,23,0.06); padding: 8px;
+    position: absolute;
+    top: calc(100% + 4px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(2,6,23,0.08);
+    overflow: hidden;
+    z-index: 100;
+
+    max-width: 92vw; /* 모바일 안전폭 */
 }
-.nsb-row { padding: 10px 8px; }
-.nsb-muted { color: #475569; }
-.nsb-error { color: #991b1b; background: #fef2f2; border-radius: 8px; }
-.nsb-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+
+/* 정렬 전환 */
+.nsb-panel.is-left  { left: 0; right: auto; }
+.nsb-panel.is-right { right: 0; left: auto; }
+
+.nsb-list { list-style: none; margin: 0; padding: 0; }
 .nsb-item {
     display: flex; align-items: center; justify-content: space-between;
-    gap: 10px; padding: 8px; border: 1px solid #e5e7eb; border-radius: 10px;
+    gap: 8px; padding: 8px 12px; border-radius: 10px;
 }
-.nsb-meta { display: inline-flex; align-items: center; gap: 8px; }
-.nsb-badge {
-    padding: 2px 8px; border-radius: 999px; border: 1px solid #e5e7eb;
-    background: rgba(0,0,0,0.04); font-size: 12px; font-weight: 700;
-}
+.nsb-item:hover { background: #f8fafc; }
+
+.nsb-meta { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .nsb-name { font-weight: 700; }
 .nsb-dist { color: #64748b; font-size: 12px; }
+
 .nsb-apply {
-    padding: 6px 10px; border-radius: 8px; border: 1px solid #e5e7eb; background: #fff;
-    font-size: 12px; cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    cursor: pointer;
 }
-.nsb-empty { padding: 12px; text-align: center; color: #475569; }
+
+.nsb-row { padding: 12px; }
+.nsb-muted { color: #64748b; }
+.nsb-error { color: #dc2626; }
+.nsb-empty { padding: 12px; color: #64748b; }
 .nsb-retry {
-    margin-left: 8px; padding: 6px 10px; border-radius: 8px; border: 1px solid #e5e7eb; background: #fff;
-    font-size: 12px; cursor: pointer;
+    margin-left: 8px; padding: 6px 10px; border-radius: 8px;
+    border: 1px solid #e5e7eb; background: #fff; cursor: pointer;
 }
