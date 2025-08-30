@@ -1,51 +1,176 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-
-  --z-panel: 1;
-  --z-nearest: 100;   /* 주변역 목록 */
-  --z-search: 200;    /* 자동완성 드롭다운 */
+/* ========= Root ========= */
+:root{
+  --z-dropdown: 1000;       /* 드롭다운/오버레이 최상위 */
+  --z-search-panel: 200;    /* 검색 패널(입력 폼) */
+  --z-result-panel: 50;     /* 결과 패널(ArrivalCard 등) */
 }
 
+/* 모든 패널 기본은 '결과' 레이어 */
 .panel {
+  position: relative; /* 기존 유지 */
+  z-index: var(--z-result-panel);
+}
+
+/* 검색 패널만 한 단계 높임 */
+.panel-search {
+  z-index: var(--z-search-panel);
+}
+
+/* 드롭다운 우선순위 확실히 최상위 */
+.ssi-panel,
+.nsb-panel {
+  z-index: var(--z-dropdown);
+}
+
+.app-root {
+  min-height: 100dvh;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
+  color: #0f172a;
   position: relative;
-  z-index: var(--z-panel);
+  background: #f8fafc;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.bg-gradient {
+  position: fixed;
+  inset: 0;
+  background:
+          radial-gradient(1200px 600px at 80% -10%, rgba(99,102,241,0.08), transparent 55%),
+          radial-gradient(1000px 600px at -10% 10%, rgba(14,165,233,0.08), transparent 50%);
+  pointer-events: none;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* ========= Container: 모바일 전용, 항상 가로 꽉 차게 ========= */
+.container {
+  width: 100vw;
+  max-width: none;
+  margin: 0;
+  padding: 16px 12px 28px;  /* 좌우 안전 여백 */
+  box-sizing: border-box;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* ========= Header ========= */
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.brand-row { display: flex; align-items: center; gap: 12px; }
+.brand-mark {
+  width: 32px; height: 32px; border-radius: 12px;
+  background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 40%, #06b6d4 100%);
+  box-shadow: 0 6px 18px rgba(79,70,229,.25);
+}
+.title { margin: 0; font-size: 20px; letter-spacing: .2px; font-weight: 800; }
+.status-wrap { display: flex; gap: 8px; align-items: center; }
+
+/* ========= Panel / Card ========= */
+.panel {
+  position: relative; /* 스왑 버튼 기준 */
+  background: #ffffff;
+  border: 1px solid #e8ecf2;
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(2,6,23,.06);
+  padding: 14px;
+  margin-top: 12px;
 }
 
-.card {
-  padding: 2em;
+.panel-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-bottom: 8px;
 }
 
-.read-the-docs {
-  color: #888;
+.h2 { margin: 0; font-size: 18px; font-weight: 800; }
+
+/* ========= Controls (모바일 1열 스택) ========= */
+.controls-row-sp {
+  display: grid;
+  grid-template-columns: 1fr; /* 항상 1열 */
+  gap: 10px;
 }
+
+.grid-gap-6 { display: grid; gap: 8px; }
+.nearest-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+/* 스왑 버튼: 두 입력 사이 중앙에 뜨게 */
+.swap-button {
+  position: absolute;
+  top: calc(46px + 10px); /* 첫 인풋(46px) + 간격(10px) */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px; height: 44px;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  box-shadow: 0 10px 22px rgba(0,0,0,.08);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; z-index: 6;
+}
+.swap-button:active { transform: translate(-50%, -48%); }
+
+/* ========= Inputs / Select ========= */
+.input {
+  height: 46px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  outline: none; background: #fff; font-size: 15px;
+  box-sizing: border-box; width: 100%; min-width: 0;
+}
+.select { height: 46px; padding-right: 28px; }
+
+/* ========= Criteria & Alerts ========= */
+.criteria-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+.criteria-label { font-size: 12px; color: #64748b; }
+.alert-danger {
+  margin-top: 12px; border: 1px solid #fecaca; background: #fff1f2; color: #7f1d1d;
+  border-radius: 12px; padding: 10px 12px;
+}
+.alert-title { font-weight: 700; margin-bottom: 2px; }
+.muted { color: #475569; }
+.muted-small { color: #64748b; font-size: 12px; }
+
+/* ========= Nearest stations (칩) ========= */
+.nearest-list { margin-top: 10px; font-size: 13px; }
+.nearest-label { margin-top: 10px; color: #6b7280; }
+.nearest-ul { margin-top: 6px; padding-left: 18px; }
+
+.nearest-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 10px; border-radius: 999px; border: 1px solid #e5e7eb; background: #fff; cursor: pointer;
+}
+.nearest-chip-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 2px 8px; border-radius: 999px; background: rgba(0,0,0,.04);
+  border: 1px solid #e5e7eb; font-size: 12px; font-weight: 700;
+}
+.nearest-chip-name { font-weight: 700; }
+.nearest-chip-dist { color: #64748b; font-size: 12px; }
+
+/* ========= Arrivals ========= */
+.mt-6 { margin-top: 6px; }
+.mt-14 { margin-top: 14px; }
+.step-title { font-weight: 800; margin-bottom: 6px; }
+.arrival-grid { display: grid; gap: 10px; }
+.arrival-empty {
+  padding: 12px; border: 1px dashed #e5e7eb; border-radius: 12px; color: #6b7280;
+}
+
+/* ========= Footer ========= */
+.footer { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; }
+
+/* ========= Pills ========= */
+.pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 600;
+}
+.pill .pill-dot { width: 8px; height: 8px; border-radius: 999px; flex: 0 0 auto; background: currentColor; display: inline-block; }
+.pill-neutral { background: #eef2ff; color: #3730a3; }
+.pill-success { background: #ecfdf5; color: #065f46; }
+.pill-danger  { background: #fef2f2; color: #991b1b; }
+
+/* ========= Dropdown 우선순위 (겹침 방지) ========= */
+:root { --z-search: 300; --z-near: 260; }
+.ssi-panel { z-index: var(--z-search); }
+.nsb-panel { z-index: var(--z-near); }
+
+/* ========= Hover ========= */
+button:hover { box-shadow: 0 10px 24px rgba(79,70,229,.16); }

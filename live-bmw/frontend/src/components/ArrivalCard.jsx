@@ -36,6 +36,7 @@ export function ArrivalCard({ arrivalItem = {}, contextLabel }) {
                 <div style={{ fontWeight:700 }}>{contextLabel ?? "도착 정보"}</div>
                 <span
                     style={{
+                        zIndex: 0,
                         marginLeft:8, fontSize:12, padding:"2px 8px", borderRadius:999,
                         background: isInner ? "#d1fae5" : "#e0e7ff",
                         color:      isInner ? "#065f46" : "#3730a3",

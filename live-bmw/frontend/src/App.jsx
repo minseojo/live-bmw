@@ -124,7 +124,7 @@ export default function App() {
                 </header>
 
                 {/* 검색 패널 */}
-                <section className="panel">
+                <section className="panel panel-search">
                     <div className="panel-head">
                         <h2 className="h2">{fromName || "-"} → {toName || "-"}</h2>
                     </div>
@@ -163,15 +163,15 @@ export default function App() {
                         />
                     </div>
 
-                    <div className="criteria-row">
-                        <label className="criteria-label">기준</label>
-                        <Select value={criteria} onChange={(e) => setCriteria(e.target.value)}>
-                            <option value="duration">최소시간</option>
-                            <option value="transfer">최소환승</option>
-                        </Select>
-                        {loading && <span className="muted" style={{ marginLeft: 8 }}>계산 중…</span>}
-                        {error && <span className="muted" style={{ marginLeft: 8 }}>{error}</span>}
-                    </div>
+                    {/*<div className="criteria-row">*/}
+                    {/*    <label className="criteria-label">기준</label>*/}
+                    {/*    <Select value={criteria} onChange={(e) => setCriteria(e.target.value)}>*/}
+                    {/*        <option value="duration">최소시간</option>*/}
+                    {/*        <option value="transfer">최소환승</option>*/}
+                    {/*    </Select>*/}
+                    {/*    {loading && <span className="muted" style={{ marginLeft: 8 }}>계산 중…</span>}*/}
+                    {/*    {error && <span className="muted" style={{ marginLeft: 8 }}>{error}</span>}*/}
+                    {/*</div>*/}
                 </section>
 
                 {/* 결과 패널 */}

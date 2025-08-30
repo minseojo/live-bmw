@@ -1,58 +1,7 @@
-.nsb-wrap { position: relative; }
-
-.nsb-trigger {
-    padding: 10px 12px;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    background: #fff;
-    cursor: pointer;
-}
-
-.nsb-panel {
-    position: absolute;
-    top: calc(100% + 4px);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-
-    background: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(2,6,23,0.08);
-    overflow: hidden;
-    z-index: 100;
-
-    max-width: 92vw; /* 모바일 안전폭 */
-}
-
-/* 정렬 전환 */
-.nsb-panel.is-left  { left: 0; right: auto; }
-.nsb-panel.is-right { right: 0; left: auto; }
-
-.nsb-list { list-style: none; margin: 0; padding: 0; }
-.nsb-item {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 8px; padding: 8px 12px; border-radius: 10px;
-}
-.nsb-item:hover { background: #f8fafc; }
-
-.nsb-meta { display: flex; align-items: center; gap: 8px; min-width: 0; }
-.nsb-name { font-weight: 700; }
-.nsb-dist { color: #64748b; font-size: 12px; }
-
-.nsb-apply {
-    padding: 6px 10px;
-    border-radius: 10px;
-    border: 1px solid #e5e7eb;
-    background: #fff;
-    cursor: pointer;
-}
-
-.nsb-row { padding: 12px; }
-.nsb-muted { color: #64748b; }
-.nsb-error { color: #dc2626; }
-.nsb-empty { padding: 12px; color: #64748b; }
-.nsb-retry {
-    margin-left: 8px; padding: 6px 10px; border-radius: 8px;
-    border: 1px solid #e5e7eb; background: #fff; cursor: pointer;
-}
+.nsb-wrap { position: relative; width:100%; }
+.nsb-btn { width:100%; height:46px; padding:10px 12px; border:1px solid #e5e7eb; border-radius:14px; background:#fff; font-size:15px; font-weight:600; text-align:left; }
+.nsb-panel { background:#fff; border:1px solid #e5e7eb; border-radius:12px; box-shadow:0 8px 24px rgba(2,6,23,.08); list-style:none; margin:0; padding:4px 0; }
+.nsb-item { display:flex; align-items:center; gap:8px; padding:8px 12px; cursor:pointer; font-size:14px; }
+.nsb-item:hover { background:#f1f5f9; }
+.nsb-name { flex:1; font-weight:700; }
+.nsb-dist { font-size:12px; color:#64748b; }
