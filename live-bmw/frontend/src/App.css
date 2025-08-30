@@ -16,13 +16,7 @@ html, body, #root {
 }
 
 /* ===== 모바일 우선 ===== */
-.app-root {
-  min-height: 100dvh;
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
-  color: #0f172a;
-  background: #f8fafc;
-  position: relative;
-}
+#root, .app-root { min-height: 100svh; min-height: -webkit-fill-available; }
 
 .bg-gradient {
   position: fixed;
@@ -198,14 +192,12 @@ html, body, #root {
   padding: 12px; border: 1px dashed #e5e7eb; border-radius: 10px; color: #6b7280;
 }
 
-/* 드롭다운 패널 우선순위 */
-.ssi-panel, .nsb-panel { z-index: var(--z-dropdown); }
-
 /* 푸터 */
 /* ===== Footer ===== */
 .footer {
   position: relative;           /* 고정 아님: 본문 아래로 */
   margin-top: 40px;             /* 콘텐츠와 여백 */
+  margin-bottom: 0;   /* ← 아래쪽 여백 제거 */
   padding: 16px 12px;
   text-align: center;
   font-size: 13px;
@@ -220,7 +212,7 @@ html, body, #root {
 /* 드롭다운은 항상 최상위 */
 .ssi-panel,
 .nsb-panel {
-  z-index: 1000;
+  var(--z-dropdown);
   position: absolute; /* 또는 fixed */
 }
 
@@ -291,17 +283,6 @@ html, body, #root {
 }
 .panel-search { z-index: var(--z-search); }
 
-/* footer는 항상 맨 아래 */
-.footer {
-  margin-top: 40px;
-  padding: 16px 12px;
-  text-align: center;
-  font-size: 13px;
-  color: #64748b;
-  z-index: 1; /* dropdown보다 낮게 */
-}
-.footer .muted-small { margin: 4px 0; }
-
 /* 드롭다운은 최상위 */
 .ssi-panel,
 .nsb-panel {
@@ -343,3 +324,7 @@ html, body, #root {
   }
 }
 
+
+.footer { margin-bottom: 0 !important; }
+input, textarea, select { -webkit-text-fill-color: #0f172a; color: #0f172a; }
+:root { color-scheme: light; }
