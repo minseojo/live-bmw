@@ -7,9 +7,7 @@ import { NearestStationsButton } from "./components/NearestStationsButton";
 import { RouteStationInput } from "./components/RouteStationInput";
 
 import { stations as stationsData } from "./data/stations.js"; // 로컬 자동완성 데이터
-import "./styles/App.css";
-
-import { RouteChip } from "./components/RouteChip.jsx";
+import "./App.css";
 
 export default function App() {
     const {
@@ -139,32 +137,14 @@ export default function App() {
                 <header className="header">
                     <div className="brand-row">
                         <div className="brand-mark" aria-hidden />
-                        <h1 className="title">Live BMW</h1>
-                    </div>
-                    <div className="status-wrap">
-                        {deviceRegistrationErrorMessage ? (
-                            <StatusPill tone="danger" text={deviceRegistrationErrorMessage} />
-                        ) : (
-                            <StatusPill
-                                tone={registeredDeviceIdentifier ? "success" : "neutral"}
-                                text={
-                                    registeredDeviceIdentifier
-                                        ? `유저 ID ${ellipsize(registeredDeviceIdentifier)}`
-                                        : isDeviceRegistrationInProgress
-                                            ? "디바이스 등록 중"
-                                            : "디바이스 미등록"
-                                }
-                            />
-                        )}
+                        <h2 className="title">실시간 지하철 알리미</h2>
                     </div>
                 </header>
 
                 {/* 검색 패널 */}
-                {/* 검색 패널 */}
                 <section className="panel panel-search route-form">
-                    {/* 상단: 주변역 + 초기화 */}
+                    {/* 상단: 주변역 | 초기화 */}
                     <div className="route-top-row">
-                        {/* 주변 역 버튼 */}
                         <NearestStationsButton
                             seedStations={nearestStations}
                             limit={5}
@@ -174,33 +154,24 @@ export default function App() {
                                 setFromSelected(true);
                             }}
                         />
-
-                        {/* 초기화 버튼 (✕) */}
                         <button
                             className="reset-btn"
                             onClick={() => {
-                                setFromName("");
-                                setToName("");
-                                setFromLineId("");
-                                setToLineId("");
-                                setFromSelected(false);
-                                setToSelected(false);
+                                setFromName(""); setToName("");
+                                setFromLineId(""); setToLineId("");
+                                setFromSelected(false); setToSelected(false);
                             }}
                         >
                             ✕
                         </button>
                     </div>
 
-                    {/* 하단: 스왑 + 출발/도착 입력 */}
+                    {/* 하단: 스왑 + 입력 */}
                     <div className="route-form-row">
-                        {/* 스왑 버튼 */}
                         <div className="swap-col">
                             <button className="swap-btn" onClick={swap} title="출발/도착 교체">⇅</button>
                         </div>
-
-                        {/* 출발/도착 인풋 */}
                         <div className="route-inputs">
-                            {/* 출발지 입력 */}
                             <RouteStationInput
                                 stations={stationsData}
                                 placeholder="출발지"
@@ -213,8 +184,6 @@ export default function App() {
                                     setFromSelected(true);
                                 }}
                             />
-
-                            {/* 도착지 입력 */}
                             <RouteStationInput
                                 stations={stationsData}
                                 placeholder="도착지"
@@ -299,11 +268,28 @@ export default function App() {
                     </section>
                 )}
 
-                <footer className="footer">
-                    <div className="muted-small">© {new Date().getFullYear()} Live BMW</div>
-                    <div className="muted-small">v0.1 · Experimental</div>
-                </footer>
             </div>
+
+            <footer className="footer">
+                <div className="muted-small">실시간 지하철 알리미 · v0.1</div>
+                {registeredDeviceIdentifier && (
+                    <div className="muted-small" style={{ color: "#94a3b8" }}>
+                        유저 ID {ellipsize(registeredDeviceIdentifier)}
+                    </div>
+                )}
+                <div className="muted-small">
+                    © {new Date().getFullYear()} ·{" "}
+                    <a
+                        href="https://qr.kakaopay.com/FTvfwZnrm"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="coffee-link"
+                    >
+                        ☕ 카카오페이로 커피 한 잔 사주기
+                    </a>
+                </div>
+            </footer>
+
         </div>
     );
 }
