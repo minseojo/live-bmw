@@ -4,6 +4,7 @@ import com.livebmw.metro.api.dto.NearestMetroStationResponse;
 import com.livebmw.metro.api.dto.NearestMetroStationView;
 import com.livebmw.metro.domain.repository.MetroStationRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MetroNearestStationService {
 
     private final MetroStationRepository metroStationRepository;
@@ -20,14 +22,11 @@ public class MetroNearestStationService {
 
     public List<NearestMetroStationResponse> find(double lat, double lng, int limit) {
         var rows = metroStationRepository.findNearest(lat, lng, limit);
-
-        // lineName(예: 2호선) 별로 가장 가까운 것만 보존
-        Map<String, NearestMetroStationView> byLine = new LinkedHashMap<>();
-        for (NearestMetroStationView row : rows) {
-            byLine.putIfAbsent(row.getLineName(), row);
+        for (var row : rows) {
+            log.info(row.toString());
         }
 
-        return byLine.values().stream()
+        return rows.stream()
                 .sorted(Comparator.comparingDouble(NearestMetroStationView::getDistanceM))
                 .limit(limit)
                 .map(v -> new NearestMetroStationResponse(

@@ -1,8 +1,6 @@
 package com.livebmw.metro.application.service;
 
 import com.livebmw.metro.domain.entity.MetroLine;
-import com.livebmw.metro.domain.entity.MetroLineAlias;
-import com.livebmw.metro.domain.repository.MetroLineAliasRepository;
 import com.livebmw.metro.domain.repository.MetroLineRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MetroLineService {
 
     private final MetroLineRepository metroLineRepository;
-    private final MetroLineAliasRepository metroLineAliasRepository;
 
     private final Map<Integer, MetroLine> byCodeCache = new ConcurrentHashMap<>();
     private final Map<String, MetroLine> byNormalizedNameCache = new ConcurrentHashMap<>();
@@ -42,16 +39,11 @@ public class MetroLineService {
         // 1) displayName 일치 탐색 (간단히 전체 로드 후 캐시 구축)
         if (byNormalizedNameCache.isEmpty()) {
             metroLineRepository.findAll().forEach(l ->
-                    byNormalizedNameCache.putIfAbsent(normalize(l.getDisplayName()), l)
+                    byNormalizedNameCache.putIfAbsent(normalize(l.getLineName()), l)
             );
         }
         MetroLine fromDisplay = byNormalizedNameCache.get(key);
-        if (fromDisplay != null) return fromDisplay;
-
-        // 2) alias 테이블
-        return metroLineAliasRepository.findByNormalizedName(key)
-                .map(MetroLineAlias::getLine)
-                .orElse(null);
+        return fromDisplay;
     }
 
     public MetroLine findById(int id) {
@@ -73,12 +65,12 @@ public class MetroLineService {
 
     public String toDisplayName(Integer code) {
         MetroLine line = ofCode(code);
-        return line != null ? line.getDisplayName() : String.valueOf(code);
+        return line != null ? line.getLineName() : String.valueOf(code);
     }
 
     public boolean matches(Integer code, String displayName) {
         MetroLine line = ofCode(code);
-        return line != null && line.getDisplayName().equals(displayName);
+        return line != null && line.getLineName().equals(displayName);
     }
 
     /** enum의 normalize 동작 이식 */

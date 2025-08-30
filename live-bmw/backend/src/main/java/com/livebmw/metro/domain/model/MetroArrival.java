@@ -6,7 +6,6 @@ import static java.time.Duration.between;
 
 public record MetroArrival(
         Integer lineId,           // ex) 1002
-        String lineName,         // ex) 2호선
         String direction,        // ex) "내선"/"외선" 또는 "상행"/"하행"
         String trainLineName,    // ex) "성수행 - 봉천방면"
         String trainNumber,      // ex) "1234"

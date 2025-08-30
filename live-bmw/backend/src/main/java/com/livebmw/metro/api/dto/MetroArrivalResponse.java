@@ -11,7 +11,6 @@ import java.util.List;
  */
 public record MetroArrivalResponse(
         int lineId,           // ex) "1002"
-        String lineName,
         String direction,   // ex) "내선"/"외선" 또는 "상행"/"하행"
         String trainLineSummary, // ex) "성수행 - 봉천방면"
         String trainNumber,      // ex) "1234"
@@ -22,7 +21,6 @@ public record MetroArrivalResponse(
     public static MetroArrivalResponse from(MetroArrival arrival) {
         return new MetroArrivalResponse(
                 arrival.lineId(),
-                arrival.lineName(),
                 arrival.direction(),
                 arrival.trainLineName(),
                 arrival.trainNumber(),

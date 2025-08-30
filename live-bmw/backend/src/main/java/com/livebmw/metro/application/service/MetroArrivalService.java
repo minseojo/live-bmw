@@ -22,16 +22,13 @@ public class MetroArrivalService {
     private final WebClient webClient;
     private final XmlMapper xmlMapper = new XmlMapper();
 
-    private final MetroLineService metroLineService;
 
     @Autowired
     public MetroArrivalService(
             @Qualifier("seoulMetroWebClient") WebClient webClient,
-            @Value("${seoul.live.metro.arrival.api.key}") String apiKey,
-            MetroLineService metroLineService) {
+            @Value("${seoul.live.metro.arrival.api.key}") String apiKey) {
         this.webClient = webClient;
         this.apiKey = apiKey;
-        this.metroLineService = metroLineService;
     }
 
     /** 서울시 실시간 도착 정보 조회 (역명 기준) */
@@ -52,10 +49,8 @@ public class MetroArrivalService {
 
             return root.rows.stream()
                     .map(row -> {
-                        final String lineName = mapMetroLineName(row.lineId);
                         return new MetroArrival(
                                 row.lineId,
-                                lineName,
                                 row.updnLine,
                                 row.trainLineNm,
                                 row.statnId,
@@ -72,7 +67,4 @@ public class MetroArrivalService {
         }
     }
 
-    private String mapMetroLineName(Integer metroId) {
-        return metroLineService.toDisplayName(metroId);
-    }
 }

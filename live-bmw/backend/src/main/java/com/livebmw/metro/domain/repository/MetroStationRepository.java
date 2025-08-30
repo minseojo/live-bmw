@@ -11,23 +11,24 @@ import java.util.List;
 public interface MetroStationRepository extends JpaRepository<MetroStation, String> {
 
     @Query(value = """
-        SELECT
-            station_id                    AS stationId,
-            station_name                  AS stationName,
-            line_id                       AS lineId,
-            line_name                     AS lineName,
-            ST_DistanceSphere(
-                geom,
-                ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)
-            )                             AS distanceM
-        FROM metro_station
-        ORDER BY geom <-> ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)
-        LIMIT :limit
-        """, nativeQuery = true)
-
+    SELECT
+        s.station_id                    AS stationId,
+        s.station_name                  AS stationName,
+        s.line_id                       AS lineId,
+        l.line_name                     AS lineName,
+        ST_DistanceSphere(
+            s.geom,
+            ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)
+        )                               AS distanceM
+    FROM metro_station s
+    JOIN metro_line l ON s.line_id = l.line_id
+    ORDER BY s.geom <-> ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)
+    LIMIT :limit
+    """, nativeQuery = true)
     List<NearestMetroStationView> findNearest(
             @Param("lat") double lat,
             @Param("lng") double lng,
             @Param("limit") int limit
     );
+
 }

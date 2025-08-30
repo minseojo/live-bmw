@@ -15,6 +15,6 @@ public class MetroLine {
     private Integer lineId;
 
     /** 표시 이름 (예: "2호선") */
-    @Column(name = "display_name", nullable = false, length = 50)
-    private String displayName;
+    @Column(name = "line_name", nullable = false, length = 50)
+    private String lineName;
 }
