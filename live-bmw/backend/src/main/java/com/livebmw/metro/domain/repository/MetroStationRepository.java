@@ -1,7 +1,7 @@
-package com.livebmw.metrostation.domain.repository;
+package com.livebmw.metro.domain.repository;
 
-import com.livebmw.metrostation.api.dto.NearestMetroStationView;
-import com.livebmw.metrostation.domain.entity.MetroStation;
+import com.livebmw.metro.api.dto.NearestMetroStationView;
+import com.livebmw.metro.domain.entity.MetroStation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

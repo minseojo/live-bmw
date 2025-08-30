@@ -1,6 +1,6 @@
-package com.livebmw.metrostation.domain.repository;
+package com.livebmw.metro.domain.repository;
 
-import com.livebmw.metrostation.domain.entity.MetroLineAlias;
+import com.livebmw.metro.domain.entity.MetroLineAlias;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

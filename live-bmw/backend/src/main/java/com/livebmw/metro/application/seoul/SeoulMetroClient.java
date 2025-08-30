@@ -1,4 +1,4 @@
-package com.livebmw.metro.application.adapter.seoul;
+package com.livebmw.metro.application.seoul;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

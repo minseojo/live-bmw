@@ -1,6 +1,6 @@
 package com.livebmw;
 
-import com.livebmw.metrostation.application.job.MetroLineAndStationCsvImporter;
+import com.livebmw.metro.application.job.MetroLineAndStationCsvImporter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

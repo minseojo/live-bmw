@@ -1,4 +1,4 @@
-package com.livebmw.metrostation.domain.entity;
+package com.livebmw.metro.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

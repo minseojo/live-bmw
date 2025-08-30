@@ -1,4 +1,4 @@
-package com.livebmw.metrostation.api.dto;
+package com.livebmw.metro.api.dto;
 
 public interface NearestMetroStationView {
     String getStationId();

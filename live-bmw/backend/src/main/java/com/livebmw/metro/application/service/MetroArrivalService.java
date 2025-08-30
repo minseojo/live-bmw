@@ -2,9 +2,8 @@ package com.livebmw.metro.application.service;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.livebmw.common.time.DateTimeUtil;
-import com.livebmw.metro.application.adapter.seoul.dto.MetroArrivalXml;
+import com.livebmw.metro.application.seoul.dto.MetroArrivalXml;
 import com.livebmw.metro.domain.model.MetroArrival;
-import com.livebmw.metrostation.application.service.MetroLineService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

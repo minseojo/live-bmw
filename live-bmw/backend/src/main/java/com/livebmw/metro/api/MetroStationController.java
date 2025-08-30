@@ -1,7 +1,7 @@
-package com.livebmw.metrostation.api;
+package com.livebmw.metro.api;
 
-import com.livebmw.metrostation.api.dto.NearestMetroStationResponse;
-import com.livebmw.metrostation.application.service.MetroNearestStationService;
+import com.livebmw.metro.api.dto.NearestMetroStationResponse;
+import com.livebmw.metro.application.service.MetroNearestStationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

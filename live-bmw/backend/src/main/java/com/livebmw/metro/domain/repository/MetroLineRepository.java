@@ -1,6 +1,6 @@
-package com.livebmw.metrostation.domain.repository;
+package com.livebmw.metro.domain.repository;
 
-import com.livebmw.metrostation.domain.entity.MetroLine;
+import com.livebmw.metro.domain.entity.MetroLine;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MetroLineRepository extends JpaRepository<MetroLine, Integer> {

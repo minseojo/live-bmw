@@ -2,7 +2,9 @@ package com.livebmw.shortestpath.application.adapter.seoul.api;
 
 import com.livebmw.common.time.DateTimeUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -17,6 +19,7 @@ import java.time.LocalDateTime;
  */
 
 @RequiredArgsConstructor
+@Slf4j
 public class SeoulShortestPathClient {
 
     public enum SearchType { duration, distance, transfer } // duration(최소시간, default), distance(최단거리), transfer(최소환승)

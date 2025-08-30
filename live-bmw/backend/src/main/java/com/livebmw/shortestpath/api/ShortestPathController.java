@@ -16,7 +16,7 @@ import com.livebmw.shortestpath.application.service.ShortestPathService;
 import com.livebmw.shortestpath.application.service.ShortestPathOrchestratorService;
 
 @RestController
-@RequestMapping("/api/shortestPath")
+@RequestMapping("/api/shortest-path")
 @RequiredArgsConstructor
 @Slf4j
 public class ShortestPathController {

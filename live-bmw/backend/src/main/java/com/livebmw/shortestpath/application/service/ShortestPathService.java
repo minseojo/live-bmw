@@ -5,6 +5,7 @@ import com.livebmw.shortestpath.application.adapter.seoul.api.SeoulShortestPathC
 import com.livebmw.shortestpath.application.adapter.seoul.dto.SeoulShortestPathParser;
 import com.livebmw.shortestpath.domain.ShortestPathPlan;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ShortestPathService {
 
     private final SeoulShortestPathClient client;
@@ -24,6 +26,7 @@ public class ShortestPathService {
             String json = client.getShortestPath(departureStationName, arrivalStationName, searchType);
             return SeoulShortestPathParser.parseMinimal(json);
         } catch (IOException | InterruptedException e) {
+            log.error(e.getMessage(), e);
             throw new RuntimeException("Failed to fetch shortest path", e);
         }
     }

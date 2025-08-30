@@ -1,9 +1,9 @@
-package com.livebmw.metrostation.application.service;
+package com.livebmw.metro.application.service;
 
-import com.livebmw.metrostation.domain.entity.MetroLine;
-import com.livebmw.metrostation.domain.entity.MetroLineAlias;
-import com.livebmw.metrostation.domain.repository.MetroLineAliasRepository;
-import com.livebmw.metrostation.domain.repository.MetroLineRepository;
+import com.livebmw.metro.domain.entity.MetroLine;
+import com.livebmw.metro.domain.entity.MetroLineAlias;
+import com.livebmw.metro.domain.repository.MetroLineAliasRepository;
+import com.livebmw.metro.domain.repository.MetroLineRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
