@@ -1,12 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDeviceRegistration } from "./hooks/useDeviceRegistration";
 import { getBrowserLocation } from "./hooks/useGeoLocation";
 import { NearestStationsButton } from "./components/NearestStationsButton";
 import { RouteStationInput } from "./components/RouteStationInput";
+import { RouteArrivalsSection } from "./components/RouteArrivalsSection.jsx";
 
 import { stations as stationsData } from "./data/stations.js"; // 로컬 자동완성 데이터
 import "./App.css";
-import { RouteArrivalsSection } from "./components/RouteArrivalsSection.jsx";
+import {fetchNearestStations} from "./api/metroApi.js";
 
 export default function App() {
     const {
@@ -30,33 +31,22 @@ export default function App() {
     // 근처 역(초기 자동 채움 + 버튼 seed)
     const [nearestStations, setNearestStations] = useState([]);
 
-    const isMobile =
-        typeof window !== "undefined" &&
-        window.matchMedia &&
-        window.matchMedia("(max-width: 480px)").matches;
-
-    // 앱/웹 최초 1회: 현재 위치 -> 근처역 -> 출발지 자동 설정 (가장 가까운 1개로 확정)
+    // 탭 리로드(F5)/첫 진입마다: 현재 위치 → 근처역 → 출발지 자동 설정
     useEffect(() => {
-        const INIT_KEY = "once:auto_nearest_origin";
-        if (sessionStorage.getItem(INIT_KEY)) return;
-        sessionStorage.setItem(INIT_KEY, "1");
-
         (async () => {
             try {
-                const coords = await getBrowserLocation();
-                // 근처역 API는 외부에 구현되어 있다고 가정 (hooks/useGeoLocation, api/metro 등)
-                // 여기서는 props로 받은 NearestStationsButton의 seed로만 사용
-                const res = await fetch(`/api/metro/stations/nearest?lat=${coords.lat}&lng=${coords.lng}&limit=3`);
-                const list = await res.json();
+                const coords = await getBrowserLocation(); // { lat, lng }
+                const list = await fetchNearestStations(coords.lat, coords.lng, 3);
+
                 if (Array.isArray(list) && list.length > 0) {
                     const first = list[0];
                     setNearestStations(list);
                     setFromName(first.stationName ?? first.name);
-                    setFromLineId(String(first.lineId || first.line_id || "")); // 라인도 함께 고정
-                    setFromSelected(true); // 자동 채움은 확정으로 간주
+                    setFromLineId(String(first.lineId || first.line_id || ""));
+                    setFromSelected(true);
                 }
-            } catch {
-                // 권한 거부/실패: 조용히 무시
+            } catch (e) {
+                console.error("위치 기반 출발지 자동 설정 실패:", e);
             }
         })();
     }, []);
@@ -65,7 +55,8 @@ export default function App() {
     const swap = () => {
         setFromName(toName);
         setToName(fromName);
-        const prevFromSel = fromSelected;
+
+        const prevFromSel  = fromSelected;
         const prevFromLine = fromLineId;
 
         setFromSelected(toSelected);
@@ -86,8 +77,8 @@ export default function App() {
                 {/* 헤더 */}
                 <header className="header">
                     <div className="brand-row">
-                        {/* ✅ public 아래 자원은 /로 시작 */}
-                        <img src="/icons/icon-192.svg" alt="로고" width="32" height="32" />
+                        {/* PWA 아이콘 png로 교체 */}
+                        <img src="/icons/icon-192.png" alt="로고" width="32" height="32" />
                         <h2 className="title">지하철 실시간 알리미</h2>
                     </div>
                 </header>
@@ -100,7 +91,7 @@ export default function App() {
                             seedStations={nearestStations}
                             limit={5}
                             onApply={(s) => {
-                                setFromName(s.stationName);
+                                setFromName(s.stationName ?? s.name);
                                 setFromLineId(String(s.lineId || s.line_id || ""));
                                 setFromSelected(true);
                             }}
@@ -130,7 +121,7 @@ export default function App() {
                                 lineId={fromLineId}
                                 onChangeText={(txt) => { setFromName(txt); setFromLineId(""); setFromSelected(false); }}
                                 onSelectStation={(s) => {
-                                    setFromName(s.station_name || s.stationName);
+                                    setFromName(s.station_name || s.stationName || s.name);
                                     setFromLineId(String(s.line_id || s.lineId || ""));
                                     setFromSelected(true);
                                 }}
@@ -142,7 +133,7 @@ export default function App() {
                                 lineId={toLineId}
                                 onChangeText={(txt) => { setToName(txt); setToLineId(""); setToSelected(false); }}
                                 onSelectStation={(s) => {
-                                    setToName(s.station_name || s.stationName);
+                                    setToName(s.station_name || s.stationName || s.name);
                                     setToLineId(String(s.line_id || s.lineId || ""));
                                     setToSelected(true);
                                 }}
@@ -150,19 +141,20 @@ export default function App() {
                         </div>
                     </div>
 
-                    {/* 기준 선택 (선택사항) */}
-                    {/*<div className="route-criteria-row">*/}
-                    {/*    <select*/}
-                    {/*        value={criteria}*/}
-                    {/*        onChange={(e) => setCriteria(e.target.value)}*/}
-                    {/*        className="input select"*/}
-                    {/*        style={{ width: "100%", marginTop: 8 }}*/}
-                    {/*    >*/}
-                    {/*        <option value="duration">최단시간</option>*/}
-                    {/*        <option value="transfer">최소환승</option>*/}
-                    {/*        <option value="distance">최단거리</option>*/}
-                    {/*    </select>*/}
-                    {/*</div>*/}
+                    {/* 기준 선택 (선택사항)
+                    <div className="route-criteria-row">
+                        <select
+                            value={criteria}
+                            onChange={(e) => setCriteria(e.target.value)}
+                            className="input select"
+                            style={{ width: "100%", marginTop: 8 }}
+                        >
+                            <option value="duration">최단시간</option>
+                            <option value="transfer">최소환승</option>
+                            <option value="distance">최단거리</option>
+                        </select>
+                    </div>
+                    */}
                 </section>
 
                 {/* 결과 패널: 내부에서 fetch + 카운트다운 */}
@@ -170,8 +162,8 @@ export default function App() {
                     <RouteArrivalsSection
                         fromName={fromName}
                         toName={toName}
-                        // searchType={criteria}
-                        when={new Date().toISOString() } /* 필요시 ISO 문자열 등 전달 */
+                        searchType={criteria}
+                        when={undefined} /* 필요시 ISO 문자열 전달 */
                     />
                 ) : (
                     <section className="panel" style={{ textAlign: "center", color: "#6b7280" }}>

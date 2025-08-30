@@ -55,6 +55,11 @@ export async function fetchShortestPathWithArrivals({ from, to, when, searchType
 }
 
 /** 근처 역 조회 */
-export async function fetchNearestStations({ lat, lng, limit = 3 }) {
-    return get("/api/metro/stations/nearest", { query: { lat, lng, limit } });
+export async function fetchNearestStations(lat, lng, limit = 5) {
+    if (lat == null || lng == null) {
+        throw new Error("lat/lng is required");
+    }
+    return get("/api/metro/stations/nearest", {
+        query: { lat, lng, limit }
+    });
 }
