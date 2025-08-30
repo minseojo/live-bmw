@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDeviceRegistration } from "./hooks/useDeviceRegistration";
 import { ArrivalCard } from "./components/ArrivalCard";
 import { fetchShortestPathWithArrivals, fetchNearestStations } from "./api/metroApi";
 import { getBrowserLocation } from "./hooks/useGeoLocation";
-import { StationSearchInput } from "./components/StationSearchInput";
 import { NearestStationsButton } from "./components/NearestStationsButton";
+import { RouteStationInput } from "./components/RouteStationInput";
 
 import { stations as stationsData } from "./data/stations.js"; // 로컬 자동완성 데이터
 import "./styles/App.css";
@@ -66,15 +66,6 @@ export default function App() {
             stationId: String(hit.station_id || hit.stationId || ""),
         };
     };
-
-    const fromStation = useMemo(
-        () => findStationMeta(fromName, fromLineId),
-        [fromName, fromLineId, stationsData, nearestStations]
-    );
-    const toStation = useMemo(
-        () => findStationMeta(toName, toLineId),
-        [toName, toLineId, stationsData, nearestStations]
-    );
 
     // 앱/웹 최초 1회: 현재 위치 -> 근처역 -> 출발지 자동 설정 (가장 가까운 1개로 확정)
     useEffect(() => {
@@ -169,48 +160,11 @@ export default function App() {
                 </header>
 
                 {/* 검색 패널 */}
-                <section className="panel panel-search">
-                    <div
-                        className="panel-head"
-                        style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}
-                    >
-                        {fromStation && (
-                            <RouteChip
-                                lineId={fromStation.lineId}
-                                lineName={fromStation.lineName}
-                                stationName={`${fromStation.stationName}`}
-                            />
-                        )}
-                        {fromStation && toStation && <span className="route-arrow">→</span>}
-                        {toStation && (
-                            <RouteChip
-                                lineId={toStation.lineId}
-                                lineName={toStation.lineName}
-                                stationName={`${toStation.stationName}`}
-                            />
-                        )}
-                    </div>
-
-                    <div className="controls-row-sp">
-                        {/* 출발역 입력 */}
-                        <StationSearchInput
-                            stations={stationsData}
-                            placeholder="출발역"
-                            value={fromName}
-                            onChange={(e) => {
-                                setFromName(e.target.value);
-                                setFromSelected(false);
-                                setFromLineId(""); // 라인 불명확해졌으니 리셋
-                            }}
-                            onSelect={(s) => {
-                                // s.station_name, s.line_id 제공됨 (정확한 라인만 반영)
-                                setFromName(s.station_name);
-                                setFromLineId(String(s.line_id));
-                                setFromSelected(true);
-                            }}
-                        />
-
-                        {/* 주변 역 목록 버튼 (선택 시 정확 라인 반영) */}
+                {/* 검색 패널 */}
+                <section className="panel panel-search route-form">
+                    {/* 상단: 주변역 + 초기화 */}
+                    <div className="route-top-row">
+                        {/* 주변 역 버튼 */}
                         <NearestStationsButton
                             seedStations={nearestStations}
                             limit={5}
@@ -221,39 +175,60 @@ export default function App() {
                             }}
                         />
 
-                        <button className="swap-button" onClick={swap} title="출발/도착 교체">
-                            ⇄
-                        </button>
-
-                        {/* 도착역 입력 */}
-                        <StationSearchInput
-                            stations={stationsData}
-                            placeholder="도착역"
-                            value={toName}
-                            onChange={(e) => {
-                                setToName(e.target.value);
-                                setToSelected(false);
+                        {/* 초기화 버튼 (✕) */}
+                        <button
+                            className="reset-btn"
+                            onClick={() => {
+                                setFromName("");
+                                setToName("");
+                                setFromLineId("");
                                 setToLineId("");
+                                setFromSelected(false);
+                                setToSelected(false);
                             }}
-                            onSelect={(s) => {
-                                setToName(s.station_name);
-                                setToLineId(String(s.line_id));
-                                setToSelected(true);
-                            }}
-                        />
+                        >
+                            ✕
+                        </button>
                     </div>
 
-                    {/* 기준 UI가 필요하면 주석 해제
-          <div className="criteria-row">
-            <label className="criteria-label">기준</label>
-            <Select value={criteria} onChange={(e) => setCriteria(e.target.value)}>
-              <option value="duration">최소시간</option>
-              <option value="transfer">최소환승</option>
-            </Select>
-            {loading && <span className="muted" style={{ marginLeft: 8 }}>계산 중…</span>}
-            {error && <span className="muted" style={{ marginLeft: 8 }}>{error}</span>}
-          </div>
-          */}
+                    {/* 하단: 스왑 + 출발/도착 입력 */}
+                    <div className="route-form-row">
+                        {/* 스왑 버튼 */}
+                        <div className="swap-col">
+                            <button className="swap-btn" onClick={swap} title="출발/도착 교체">⇅</button>
+                        </div>
+
+                        {/* 출발/도착 인풋 */}
+                        <div className="route-inputs">
+                            {/* 출발지 입력 */}
+                            <RouteStationInput
+                                stations={stationsData}
+                                placeholder="출발지"
+                                value={fromName}
+                                lineId={fromLineId}
+                                onChangeText={(txt) => { setFromName(txt); setFromLineId(""); setFromSelected(false); }}
+                                onSelectStation={(s) => {
+                                    setFromName(s.station_name || s.stationName);
+                                    setFromLineId(String(s.line_id || s.lineId || ""));
+                                    setFromSelected(true);
+                                }}
+                            />
+
+                            {/* 도착지 입력 */}
+                            <RouteStationInput
+                                stations={stationsData}
+                                placeholder="도착지"
+                                value={toName}
+                                lineId={toLineId}
+                                onChangeText={(txt) => { setToName(txt); setToLineId(""); setToSelected(false); }}
+                                onSelectStation={(s) => {
+                                    setToName(s.station_name || s.stationName);
+                                    setToLineId(String(s.line_id || s.lineId || ""));
+                                    setToSelected(true);
+                                }}
+                            />
+                        </div>
+                    </div>
                 </section>
 
                 {/* 결과 패널 */}

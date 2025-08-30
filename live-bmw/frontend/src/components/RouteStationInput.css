@@ -1,0 +1,66 @@
+.rsi-wrap { position: relative; width: 100%; }
+
+.rsi-input {
+    width: 100%;
+    height: 46px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+.rsi-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    max-height: 320px;
+    overflow: auto;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 12px 28px rgba(2,6,23,.12);
+    padding: 6px;
+    z-index: 1000; /* 검색 드롭다운 최상위 */
+}
+
+.rsi-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.rsi-item.is-active { background: #f8fafc; }
+
+.rsi-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px; font-weight: 700;
+    border: 1px solid currentColor;
+    background: rgba(0,0,0,.04);
+    color: currentColor;
+}
+
+.rsi-dot { width: 8px; height: 8px; border-radius: 999px; display: inline-block; }
+
+.rsi-name { font-weight: 700; }
+
+.rsi-chip {
+    width: 100%;
+    height: 46px;
+    border-radius: 14px;
+    border: 1.5px solid;
+    background: #fff;
+    font-size: 15px;
+    font-weight: 800;
+    display: inline-flex; align-items: center; gap: 8px; justify-content: flex-start;
+    padding: 0 12px;
+}
+
+.rsi-chip-dot { width: 8px; height: 8px; border-radius: 999px; display: inline-block; }
