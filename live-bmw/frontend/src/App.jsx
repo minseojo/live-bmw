@@ -42,29 +42,6 @@ export default function App() {
         window.matchMedia &&
         window.matchMedia("(max-width: 480px)").matches;
 
-    /** 이름+라인ID로 정확 매칭된 메타 가져오기 */
-    const findStationMeta = (name, lineId) => {
-        if (!name || !lineId) return null;
-        const hit =
-            stationsData.find(
-                (s) =>
-                    (s.station_name || s.stationName) === name &&
-                    String(s.line_id || s.lineId) === String(lineId)
-            ) ||
-            nearestStations.find(
-                (s) =>
-                    (s.stationName || s.station_name) === name &&
-                    String(s.lineId || s.line_id) === String(lineId)
-            );
-        if (!hit) return null;
-        return {
-            stationName: hit.station_name || hit.stationName || name,
-            lineId: String(hit.line_id || hit.lineId || ""),
-            lineName: hit.line_name || hit.lineName || "",
-            stationId: String(hit.station_id || hit.stationId || ""),
-        };
-    };
-
     // 앱/웹 최초 1회: 현재 위치 -> 근처역 -> 출발지 자동 설정 (가장 가까운 1개로 확정)
     useEffect(() => {
         const INIT_KEY = "once:auto_nearest_origin";
@@ -136,8 +113,8 @@ export default function App() {
                 {/* 헤더 */}
                 <header className="header">
                     <div className="brand-row">
-                        <div className="brand-mark" aria-hidden />
-                        <h2 className="title">실시간 지하철 알리미</h2>
+                        <img src="../public/icons/icon-192.svg" alt="로고" width="32" height="32"/>
+                        <h2 className="title">지하철 실시간 알리미</h2>
                     </div>
                 </header>
 
@@ -271,7 +248,7 @@ export default function App() {
             </div>
 
             <footer className="footer">
-                <div className="muted-small">실시간 지하철 알리미 · v0.1</div>
+                <div className="muted-small">지하철 실시간 알리미 · v0.1</div>
                 {registeredDeviceIdentifier && (
                     <div className="muted-small" style={{ color: "#94a3b8" }}>
                         유저 ID {ellipsize(registeredDeviceIdentifier)}
