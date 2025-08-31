@@ -1,18 +1,39 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="/icons/icon-192.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#f8fafc" />
-    <meta name="color-scheme" content="light" />
-    <link rel="manifest" href="/manifest.webmanifest?v=2">
-    <meta name="theme-color" content="#111827" />
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
-    <title>지하철 실시간 알리미</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+  <!-- 기존 PWA 메타 -->
+  <link rel="manifest" href="/manifest.webmanifest?v=3" crossorigin="use-credentials">
+  <meta name="application-name" content="지하철 실시간 알리미" />
+  <meta name="theme-color" content="#111827" />
+  <meta name="color-scheme" content="light" />
+
+  <!-- iOS PWA 필수 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="지하철 실시간 알리미">
+
+  <!-- 홈 화면 아이콘 (iOS용) -->
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon-180.png" sizes="180x180">
+
+  <!-- 파비콘 (데스크톱/브라우저) -->
+  <link rel="icon" type="image/png" href="/icons/icon-192.png" sizes="192x192">
+
+
+  <title>지하철 실시간 알리미</title>
+</head>
+<body>
+<div id="root"></div>
+<script type="module" src="/src/main.jsx"></script>
+<script>
+  // 서비스워커 등록 (루트 스코프)
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(console.error);
+    });
+  }
+</script>
+</body>
 </html>
