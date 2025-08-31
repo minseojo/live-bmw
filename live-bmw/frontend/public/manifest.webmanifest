@@ -1,9 +1,7 @@
 {
-  "id": "/",
-  "name": "실시간 지하철 알리미",
-  "short_name": "지하철 알리미",
-  "start_url": "/?source=pwa",
-  "scope": "/",
+  "name": "실시간 지하철 알리미",     // 홈 화면에 전체 이름으로 표시
+  "short_name": "지하철 알리미",     // 아이콘 아래 짧게 표시
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#111111",
@@ -20,11 +18,12 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-{
-      "src": "/icons/apple-touch-icon-180.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
+    {
+       "src": "/icons/apple-touch-icon-180.png",
+       "sizes": "192x192",
+       "type": "image/png",
+       "purpose": "any maskable"
+     },
   ]
+
 }

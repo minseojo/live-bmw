@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { useDeviceRegistration } from "./hooks/useDeviceRegistration";
 import { getBrowserLocation } from "./hooks/useGeoLocation";
 import { NearestStationsButton } from "./components/NearestStationsButton";
@@ -7,7 +7,7 @@ import { RouteArrivalsSection } from "./components/RouteArrivalsSection.jsx";
 
 import { stations as stationsData } from "./data/stations.js"; // 로컬 자동완성 데이터
 import "./App.css";
-import { fetchNearestStations } from "./api/metroApi.js";
+import {fetchNearestStations} from "./api/metroApi.js";
 
 export default function App() {
     const {
@@ -15,18 +15,6 @@ export default function App() {
         deviceRegistrationErrorMessage,
         isDeviceRegistrationInProgress,
     } = useDeviceRegistration();
-
-    // 환경 감지
-    const isIOS = useMemo(() => {
-        const ua = navigator.userAgent || navigator.vendor || "";
-        return /iPad|iPhone|iPod/.test(ua);
-    }, []);
-    const isStandalone = useMemo(() => {
-        // iOS: window.navigator.standalone
-        // 기타: display-mode: standalone
-        const mq = window.matchMedia?.("(display-mode: standalone)")?.matches;
-        return !!(window.navigator?.standalone) || !!mq;
-    }, []);
 
     // 검색 입력/상태
     const [fromName, setFromName] = useState("");
@@ -43,17 +31,13 @@ export default function App() {
     // 근처 역(초기 자동 채움 + 버튼 seed)
     const [nearestStations, setNearestStations] = useState([]);
 
-    // iOS 위치 버튼 진행상태/에러
-    const [geoBusy, setGeoBusy] = useState(false);
-    const [geoError, setGeoError] = useState("");
-
-    // ===== iOS: 탭 이후에만 위치 요청 / 기타: 자동 요청 =====
+    // 탭 리로드(F5)/첫 진입마다: 현재 위치 → 근처역 → 출발지 자동 설정
     useEffect(() => {
-        if (isIOS) return; // iOS는 버튼으로만 실행
         (async () => {
             try {
                 const coords = await getBrowserLocation(); // { lat, lng }
                 const list = await fetchNearestStations(coords.lat, coords.lng, 3);
+
                 if (Array.isArray(list) && list.length > 0) {
                     const first = list[0];
                     setNearestStations(list);
@@ -65,44 +49,14 @@ export default function App() {
                 console.error("위치 기반 출발지 자동 설정 실패:", e);
             }
         })();
-    }, [isIOS]);
-
-    // iOS에서 호출할 위치 요청 핸들러 (사용자 제스처 필수)
-    const requestLocationOnce = async () => {
-        setGeoError("");
-        setGeoBusy(true);
-        try {
-            const coords = await getBrowserLocation(); // 내부에서 geolocation 호출
-            const list = await fetchNearestStations(coords.lat, coords.lng, 3);
-            if (Array.isArray(list) && list.length > 0) {
-                const first = list[0];
-                setNearestStations(list);
-                setFromName(first.stationName ?? first.name);
-                setFromLineId(String(first.lineId || first.line_id || ""));
-                setFromSelected(true);
-            } else {
-                setGeoError("근처 역을 찾지 못했습니다. 수동으로 입력해 주세요.");
-            }
-        } catch (e) {
-            console.error(e);
-            // 사파리/홈앱 권한/정확도/차단 케이스 안내
-            setGeoError(
-                "위치 권한이 거부되었거나 차단되었습니다.\n" +
-                "1) 설정 > Safari(또는 홈앱의 앱 항목) > 위치를 '앱을 사용하는 동안'으로 허용\n" +
-                "2) '정확한 위치(Precise)' ON\n" +
-                "후 버튼을 다시 눌러 주세요."
-            );
-        } finally {
-            setGeoBusy(false);
-        }
-    };
+    }, []);
 
     // 스왑 (선택 상태 + 라인까지 함께)
     const swap = () => {
         setFromName(toName);
         setToName(fromName);
 
-        const prevFromSel = fromSelected;
+        const prevFromSel  = fromSelected;
         const prevFromLine = fromLineId;
 
         setFromSelected(toSelected);
@@ -127,13 +81,6 @@ export default function App() {
                         <img src="/icons/icon-192.png" alt="로고" width="32" height="32" />
                         <h2 className="title">지하철 실시간 알리미</h2>
                     </div>
-
-                    {/* iOS에서 홈앱/브라우저 여부 안내 (선택사항) */}
-                    {isIOS && (
-                        <div className="muted-small" style={{ color: "#94a3b8" }}>
-                            {isStandalone ? "홈 화면 앱 모드" : "Safari 모드"}
-                        </div>
-                    )}
                 </header>
 
                 {/* 검색 패널 */}
@@ -149,39 +96,17 @@ export default function App() {
                                 setFromSelected(true);
                             }}
                         />
-
-                        {/* iOS 전용: 위치 요청 버튼 (제스처 필요) */}
-                        {isIOS && (
-                            <button
-                                className="btn primary"
-                                onClick={requestLocationOnce}
-                                disabled={geoBusy}
-                                title="현재 위치로 근처 역 찾기 (iOS는 탭 필요)"
-                                style={{ marginLeft: 8 }}
-                            >
-                                {geoBusy ? "위치 확인 중…" : "현재 위치로 찾기"}
-                            </button>
-                        )}
-
                         <button
                             className="reset-btn"
                             onClick={() => {
                                 setFromName(""); setToName("");
                                 setFromLineId(""); setToLineId("");
                                 setFromSelected(false); setToSelected(false);
-                                setGeoError("");
                             }}
-                            style={{ marginLeft: 8 }}
                         >
                             ✕
                         </button>
                     </div>
-
-                    {geoError && (
-                        <div className="muted-small" style={{ color: "#ef4444", whiteSpace: "pre-line", marginTop: 6 }}>
-                            {geoError}
-                        </div>
-                    )}
 
                     {/* 하단: 스왑 + 입력 */}
                     <div className="route-form-row">
@@ -217,19 +142,19 @@ export default function App() {
                     </div>
 
                     {/* 기준 선택 (선택사항)
-          <div className="route-criteria-row">
-            <select
-              value={criteria}
-              onChange={(e) => setCriteria(e.target.value)}
-              className="input select"
-              style={{ width: "100%", marginTop: 8 }}
-            >
-              <option value="duration">최단시간</option>
-              <option value="transfer">최소환승</option>
-              <option value="distance">최단거리</option>
-            </select>
-          </div>
-          */}
+                    <div className="route-criteria-row">
+                        <select
+                            value={criteria}
+                            onChange={(e) => setCriteria(e.target.value)}
+                            className="input select"
+                            style={{ width: "100%", marginTop: 8 }}
+                        >
+                            <option value="duration">최단시간</option>
+                            <option value="transfer">최소환승</option>
+                            <option value="distance">최단거리</option>
+                        </select>
+                    </div>
+                    */}
                 </section>
 
                 {/* 결과 패널: 내부에서 fetch + 카운트다운 */}
