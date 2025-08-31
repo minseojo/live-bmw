@@ -17,7 +17,12 @@ public record MetroArrival(
         LocalDateTime expectedArrivalTime = receivedAt.plusSeconds(etaSeconds);
 
         // 현재 시각과 도착 예정 시각의 차이 계산
-        long diff = between(LocalDateTime.now(), expectedArrivalTime).getSeconds();
+        long diff = between(LocalDateTime.now(), expectedArrivalTime).getSeconds() + 30;
+
+        if (diff > 600)       diff += 100;
+        else if (diff > 500)       diff += 80; // 8분20초↑
+        else if (diff > 400)  diff += 60;  // 6분40초~8분40초
+        else if (diff > 200)  diff += 20;
 
         // 0보다 작으면 이미 도착했다고 보고 최소 0 반환
         return (int) Math.max(0, diff);

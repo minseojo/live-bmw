@@ -2,8 +2,11 @@ import React from "react";
 import { LineBadge } from "./LineBadge";
 
 function formatEtaKorean(sec) {
+    if (sec > 32400) sec -= 32400;
     if (sec == null || Number.isNaN(sec)) return "—";
-    if (sec <= 0) return "도착";
+    if (sec <= 10) return "도착";
+    if (sec <= 40) return "곧 도착";
+    if (sec < 80)  return "약 1분 내";
     const m = Math.floor(sec / 60), s = sec % 60;
     if (m === 0) return `${s}초 후`;
     if (s === 0) return `${m}분 후`;
