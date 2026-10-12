@@ -2,7 +2,7 @@
 
 출발역·도착역을 넣으면 최단 경로의 탑승역·환승역마다 **내가 탈 방향 열차**의 실시간 도착 정보를 한 화면에 보여주는 모바일 웹앱(PWA).
 
-- 배포 주소 — https://livebmw.cloud (현재 서버 중단)
+- 운영 — 실서비스로 배포·운영 후 종료 (프론트엔드 Vercel · API `livebmw.cloud`)
 - 개발 기간 — 2025.08.23 ~ 2025.09.09 · 개인 프로젝트 · 커밋 55개
 
 ---
@@ -115,7 +115,7 @@ sequenceDiagram
 | Backend | Java 17 · Spring Boot 3.5 · Spring Data JPA · Hibernate Spatial · JTS · WebClient · Jackson XML |
 | DB | PostgreSQL + PostGIS |
 | Frontend | React 19 · Vite · PWA (홈 화면 설치) |
-| 배포 | Vercel (프론트엔드) |
+| 배포 (종료) | Vercel (프론트엔드) · `livebmw.cloud` (API) |
 | 외부 데이터 | 서울시 지하철 최단경로 API · 실시간 도착정보 API · 지하철역 좌표 CSV |
 
 ---
